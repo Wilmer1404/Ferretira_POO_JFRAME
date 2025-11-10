@@ -352,6 +352,11 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tablaEmpleados.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tablaEmpleadosMousePressed(evt);
+            }
+        });
         scrollTabla.setViewportView(tablaEmpleados);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -415,7 +420,7 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
 
         if (respuesta == null) {
             JOptionPane.showMessageDialog(this, "Empleado guardado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            this.listarEmpleados(); 
+            this.listarEmpleados();
             this.gestionarEstadoFormulario("INICIO");
         } else {
             JOptionPane.showMessageDialog(this, respuesta, "Error de Negocio", JOptionPane.ERROR_MESSAGE);
@@ -429,7 +434,7 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
         }
 
         int fila = this.tablaEmpleados.getSelectedRow();
-        if (fila < 0) { 
+        if (fila < 0) {
             JOptionPane.showMessageDialog(this, "Error al seleccionar la fila.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -481,7 +486,7 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
         txtDni.requestFocus();
     }//GEN-LAST:event_btnNuevoActionPerformed
 
-    private void tablaEmpleadosMousePressed(java.awt.event.MouseEvent evt) {
+    private void tablaEmpleadosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaEmpleadosMousePressed
         if (modeloTabla.getRowCount() == 0) {
             return;
         }
@@ -506,7 +511,7 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error al seleccionar: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }
+    }//GEN-LAST:event_tablaEmpleadosMousePressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
