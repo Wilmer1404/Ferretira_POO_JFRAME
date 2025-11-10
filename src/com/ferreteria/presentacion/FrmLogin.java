@@ -3,7 +3,7 @@ package com.ferreteria.presentacion;
 import com.ferreteria.entidades.Cliente;
 import com.ferreteria.entidades.Empleado;
 import com.ferreteria.negocio.ClienteNegocio;
-import com.ferreteria.negocio.EmpleadoNegocio; 
+import com.ferreteria.negocio.EmpleadoNegocio;
 import java.util.Optional;
 import javax.swing.JOptionPane;
 
@@ -57,6 +57,11 @@ public class FrmLogin extends javax.swing.JFrame {
         });
 
         btnRegistrar.setText("Registrarse");
+        btnRegistrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistrarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -125,13 +130,13 @@ public class FrmLogin extends javax.swing.JFrame {
         Optional<Empleado> empleadoOpt = this.EMPLEADO_NEGOCIO.login(email, password);
         if (empleadoOpt.isPresent()) {
             lblMensaje.setText("");
-            
+
             FrmDashboardAdmin adminDash = new FrmDashboardAdmin();
 
-            adminDash.setSize(1280, 720); 
-            adminDash.setLocationRelativeTo(null); 
+            adminDash.setSize(1280, 720);
+            adminDash.setLocationRelativeTo(null);
             adminDash.setVisible(true);
-            this.dispose(); 
+            this.dispose();
             return;
         }
 
@@ -146,6 +151,13 @@ public class FrmLogin extends javax.swing.JFrame {
 
         lblMensaje.setText("Email o contraseña incorrectos.");
     }//GEN-LAST:event_btnLoginActionPerformed
+
+    private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
+        this.dispose();
+
+        FrmRegistroCliente registroForm = new FrmRegistroCliente();
+        registroForm.setVisible(true);
+    }//GEN-LAST:event_btnRegistrarActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
