@@ -8,12 +8,12 @@ import java.util.Optional;
 import javax.swing.JOptionPane;
 
 public class FrmLogin extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmLogin.class.getName());
-    
+
     private final ClienteNegocio CLIENTE_NEGOCIO;
     private final EmpleadoNegocio EMPLEADO_NEGOCIO;
-    
+
     public FrmLogin() {
         initComponents();
         this.CLIENTE_NEGOCIO = new ClienteNegocio();
@@ -110,7 +110,7 @@ public class FrmLogin extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEmailActionPerformed
-       // TODO add your handling code here:
+        // TODO add your handling code here:
     }//GEN-LAST:event_txtEmailActionPerformed
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
@@ -121,26 +121,33 @@ public class FrmLogin extends javax.swing.JFrame {
             lblMensaje.setText("Email y contraseña son obligatorios.");
             return;
         }
-        
 
         Optional<Empleado> empleadoOpt = this.EMPLEADO_NEGOCIO.login(email, password);
         if (empleadoOpt.isPresent()) {
             // ¡Éxito Admin!
             lblMensaje.setText("");
-            // ¡Éxito Admin!
+            
             FrmDashboardAdmin adminDash = new FrmDashboardAdmin();
+
+            // --- ¡¡AÑADE ESTAS DOS LÍNEAS AQUÍ!! ---
+            // Le damos un tamaño grande (puedes ajustarlo)
+            adminDash.setSize(1280, 720); 
+            // La centramos en el monitor
+            adminDash.setLocationRelativeTo(null); 
+            // --- FIN DE LÍNEAS A AÑADIR ---
+
             adminDash.setVisible(true);
             this.dispose(); // Cierra la ventana de login
             return;
         }
-        
+
         // B. Intentar login como Cliente
         Optional<Cliente> clienteOpt = this.CLIENTE_NEGOCIO.login(email, password);
         if (clienteOpt.isPresent()) {
             // ¡Éxito Cliente!
             lblMensaje.setText("");
             JOptionPane.showMessageDialog(this, "Bienvenido Cliente: " + clienteOpt.get().getNombre());
-            
+
             // Aquí abriríamos el FrmDashboardCliente
             // FrmDashboardCliente clienteDash = new FrmDashboardCliente(clienteOpt.get()); // Le pasamos el cliente
             // clienteDash.setVisible(true);

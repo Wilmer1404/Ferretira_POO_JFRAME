@@ -5,12 +5,12 @@ import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 
 public class FrmDashboardAdmin extends javax.swing.JFrame {
-        
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmDashboardAdmin.class.getName());
 
     public FrmDashboardAdmin() {
         initComponents();
-        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        //this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setTitle("Panel de Administración - FerreteriaApp");
     }
 
@@ -103,25 +103,18 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
 
     private void itemGestionProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemGestionProductosActionPerformed
         // 1. Creas la instancia del formulario
-    FrmGestionProductos frm = new FrmGestionProductos();
-    
-    // 2. Lo añades a tu panel de escritorio (ej. jDesktopPane1)
-    desktopPrincipal.add(frm);
-    
-    // 3. Lo haces visible
-    frm.setVisible(true);
-    
-    // 4. Y AQUÍ LO MAXIMIZAS
-    try {
-        frm.setMaximum(true);
-    } catch (java.beans.PropertyVetoException e) {
-        // Manejar la excepción
-        // e.printStackTrace();
-    }
+        FrmGestionProductos frm = new FrmGestionProductos();
+
+        // 2. Usamos tu método para centrarlo y añadirlo
+        abrirVentanaInterna(frm);
     }//GEN-LAST:event_itemGestionProductosActionPerformed
 
     private void itemGestionEmpleadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemGestionEmpleadosActionPerformed
-        // TODO: Abrir el JInternalFrame de Gestión de Empleados
+        // 1. Creas la instancia del formulario
+        FrmGestionEmpleados frm = new FrmGestionEmpleados();
+
+        // 2. Usamos tu método para centrarlo y añadirlo
+        abrirVentanaInterna(frm);
     }//GEN-LAST:event_itemGestionEmpleadosActionPerformed
 
     private void itemReporteVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemReporteVentasActionPerformed
@@ -152,17 +145,37 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
 
         java.awt.EventQueue.invokeLater(() -> new FrmDashboardAdmin().setVisible(true));
     }
-    
+
     private void abrirVentanaInterna(JInternalFrame frame) {
-        // (Lógica avanzada opcional: verificar si ya está abierto)
-        
+        // Verificar si ya está abierto
+        for (JInternalFrame openFrame : desktopPrincipal.getAllFrames()) {
+            if (openFrame.getClass().equals(frame.getClass())) {
+                openFrame.toFront();
+                try {
+                    openFrame.setSelected(true);
+                } catch (java.beans.PropertyVetoException e) {
+                    // Ignorar
+                }
+                return;
+            }
+        }
+
         // Centrar la ventana interna
         Dimension desktopSize = desktopPrincipal.getSize();
         Dimension frameSize = frame.getSize();
-        frame.setLocation((desktopSize.width - frameSize.width) / 2, (desktopSize.height - frameSize.height) / 2);
-        
+        frame.setLocation(
+                (desktopSize.width - frameSize.width) / 2,
+                (desktopSize.height - frameSize.height) / 2
+        );
+
         desktopPrincipal.add(frame);
         frame.setVisible(true);
+
+        try {
+            frame.setMaximum(true);  // Maximizar automáticamente
+        } catch (java.beans.PropertyVetoException e) {
+            // Si no se puede maximizar, no pasa nada
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

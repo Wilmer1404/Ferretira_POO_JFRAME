@@ -35,6 +35,9 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
         // 1. Inicializa los componentes visuales (los crea NetBeans)
         initComponents();
         
+        this.setSize(900, 600);
+        this.setMinimumSize(new java.awt.Dimension(800, 500));
+        
         // 2. Inicializar la capa de negocio
         this.PRODUCTO_NEGOCIO = new ProductoNegocio();
         this.CATEGORIA_NEGOCIO = new CategoriaNegocio(); // <--- INICIALIZADO
@@ -78,6 +81,13 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
         modeloTabla.addColumn("Unidad");
         
         this.tablaProductos.setModel(modeloTabla);
+        
+        this.tablaProductos.getColumnModel().getColumn(0).setPreferredWidth(40);
+        this.tablaProductos.getColumnModel().getColumn(1).setPreferredWidth(80);
+        this.tablaProductos.getColumnModel().getColumn(2).setPreferredWidth(200);
+        this.tablaProductos.getColumnModel().getColumn(3).setPreferredWidth(100);
+        this.tablaProductos.getColumnModel().getColumn(4).setPreferredWidth(100);
+        this.tablaProductos.getColumnModel().getColumn(5).setPreferredWidth(80);
     }
     
     private void cargarComboTipoProducto() {
