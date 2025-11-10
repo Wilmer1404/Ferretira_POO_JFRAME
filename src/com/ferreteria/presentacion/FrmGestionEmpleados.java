@@ -15,24 +15,14 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
     private int idSeleccionado;
 
     public FrmGestionEmpleados() {
-        // 1. Inicializa los componentes visuales (NetBeans)
         initComponents();
         this.setSize(900, 600);
         this.setMinimumSize(new java.awt.Dimension(800, 500));
 
-        // 2. Inicializar la capa de negocio
         this.EMPLEADO_NEGOCIO = new EmpleadoNegocio();
-
-        // 3. Configurar la JTable (Cabeceras)
         this.definirCabecerasTabla();
-        
-        // 4. Cargar ComboBoxes
         this.cargarCombos();
-
-        // 5. Cargar datos iniciales en la JTable
         this.listarEmpleados();
-
-        // 6. Configurar el estado inicial del formulario
         this.gestionarEstadoFormulario("INICIO");
     }
     
@@ -52,26 +42,24 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
         modeloTabla.addColumn("Estado");
 
         this.tablaEmpleados.setModel(modeloTabla);
-        
-        this.tablaEmpleados.getColumnModel().getColumn(0).setPreferredWidth(40);   // ID
-        this.tablaEmpleados.getColumnModel().getColumn(1).setPreferredWidth(80);   // DNI
-        this.tablaEmpleados.getColumnModel().getColumn(2).setPreferredWidth(120);  // Nombre
-        this.tablaEmpleados.getColumnModel().getColumn(3).setPreferredWidth(150);  // Apellidos
-        this.tablaEmpleados.getColumnModel().getColumn(4).setPreferredWidth(180);  // Email
-        this.tablaEmpleados.getColumnModel().getColumn(5).setPreferredWidth(80);   // Rol
+       
+        this.tablaEmpleados.getColumnModel().getColumn(0).setPreferredWidth(40);
+        this.tablaEmpleados.getColumnModel().getColumn(1).setPreferredWidth(80);
+        this.tablaEmpleados.getColumnModel().getColumn(2).setPreferredWidth(120);
+        this.tablaEmpleados.getColumnModel().getColumn(3).setPreferredWidth(150);
+        this.tablaEmpleados.getColumnModel().getColumn(4).setPreferredWidth(180);
+        this.tablaEmpleados.getColumnModel().getColumn(5).setPreferredWidth(80); 
         this.tablaEmpleados.getColumnModel().getColumn(6).setPreferredWidth(70);
         
         
     }
     
     private void cargarCombos() {
-        // Cargar Roles
         DefaultComboBoxModel<String> modeloRol = (DefaultComboBoxModel<String>) cmbRol.getModel();
         modeloRol.removeAllElements();
         modeloRol.addElement("ADMIN");
         modeloRol.addElement("VENDEDOR");
         
-        // Cargar Estado
         DefaultComboBoxModel<String> modeloActivo = (DefaultComboBoxModel<String>) cmbActivo.getModel();
         modeloActivo.removeAllElements();
         modeloActivo.addElement("Activo");
@@ -98,7 +86,7 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
                 btnDesactivar.setEnabled(false);
                 btnCancelar.setEnabled(true);
                 limpiarYBloquearCampos(false);
-                txtPassword.setEnabled(true); // Habilitar password solo en "NUEVO"
+                txtPassword.setEnabled(true); 
                 break;
             case "EDITAR":
                 this.accion = "editar";
@@ -109,7 +97,7 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
                 btnDesactivar.setEnabled(false);
                 btnCancelar.setEnabled(true);
                 limpiarYBloquearCampos(false);
-                txtPassword.setEnabled(false); // Deshabilitar password en "EDITAR"
+                txtPassword.setEnabled(false); 
                 break;
             case "SELECCIONADO":
                 btnNuevo.setEnabled(true);
@@ -139,7 +127,6 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
         cmbRol.setEnabled(!bloquear);
         cmbActivo.setEnabled(!bloquear);
         
-        // Por defecto, password deshabilitado
         if(bloquear) {
             txtPassword.setEnabled(false);
         }
@@ -416,7 +403,6 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
             return;
         }
 
-        // 2. Crear el objeto Empleado
         Empleado emp = new Empleado();
         emp.setDni(txtDni.getText().trim());
         emp.setNombre(txtNombre.getText().trim());
@@ -425,23 +411,19 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
         emp.setRol((String) cmbRol.getSelectedItem());
         emp.setActivo(cmbActivo.getSelectedItem().equals("Activo"));
 
-        // 3. Enviar a la capa de Negocio
         String respuesta = null;
 
         if (this.accion.equals("guardar")) {
-            // Solo seteamos el password si es uno nuevo
             emp.setPasswordHash(new String(txtPassword.getPassword()));
             respuesta = this.EMPLEADO_NEGOCIO.insertar(emp);
-        } else { // "editar"
+        } else { 
             emp.setEmpleadoId(this.idSeleccionado);
-            // No seteamos el password, la capa de negocio/DAO no debe actualizarlo
             respuesta = this.EMPLEADO_NEGOCIO.actualizar(emp);
         }
 
-        // 4. Interpretar la respuesta
         if (respuesta == null) {
             JOptionPane.showMessageDialog(this, "Empleado guardado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            this.listarEmpleados(); // Recargar la tabla
+            this.listarEmpleados(); 
             this.gestionarEstadoFormulario("INICIO");
         } else {
             JOptionPane.showMessageDialog(this, respuesta, "Error de Negocio", JOptionPane.ERROR_MESSAGE);
@@ -454,9 +436,8 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
             return;
         }
         
-        // Cargamos los datos de la fila seleccionada en los campos
         int fila = this.tablaEmpleados.getSelectedRow();
-        if (fila < 0) { // Seguridad por si acaso
+        if (fila < 0) { 
              JOptionPane.showMessageDialog(this, "Error al seleccionar la fila.", "Error", JOptionPane.ERROR_MESSAGE);
              return;
         }
@@ -468,7 +449,6 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
         cmbRol.setSelectedItem((String) modeloTabla.getValueAt(fila, 5));
         cmbActivo.setSelectedItem((String) modeloTabla.getValueAt(fila, 6));
         
-        // Cambiamos el estado
         this.gestionarEstadoFormulario("EDITAR");
         txtDni.requestFocus();
     }//GEN-LAST:event_btnEditarActionPerformed
@@ -486,7 +466,7 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
                 JOptionPane.WARNING_MESSAGE);
 
         if (confirm != JOptionPane.YES_OPTION) {
-            return; // El usuario canceló
+            return; 
         }
 
         String respuesta = this.EMPLEADO_NEGOCIO.desactivar(this.idSeleccionado);

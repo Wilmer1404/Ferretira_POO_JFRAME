@@ -3,7 +3,7 @@ package com.ferreteria.presentacion;
 import com.ferreteria.entidades.Cliente;
 import com.ferreteria.entidades.Empleado;
 import com.ferreteria.negocio.ClienteNegocio;
-import com.ferreteria.negocio.EmpleadoNegocio; // Necesitaremos esto para el login de Admin
+import com.ferreteria.negocio.EmpleadoNegocio; 
 import java.util.Optional;
 import javax.swing.JOptionPane;
 
@@ -124,44 +124,29 @@ public class FrmLogin extends javax.swing.JFrame {
 
         Optional<Empleado> empleadoOpt = this.EMPLEADO_NEGOCIO.login(email, password);
         if (empleadoOpt.isPresent()) {
-            // ¡Éxito Admin!
             lblMensaje.setText("");
             
             FrmDashboardAdmin adminDash = new FrmDashboardAdmin();
 
-            // --- ¡¡AÑADE ESTAS DOS LÍNEAS AQUÍ!! ---
-            // Le damos un tamaño grande (puedes ajustarlo)
             adminDash.setSize(1280, 720); 
-            // La centramos en el monitor
             adminDash.setLocationRelativeTo(null); 
-            // --- FIN DE LÍNEAS A AÑADIR ---
-
             adminDash.setVisible(true);
-            this.dispose(); // Cierra la ventana de login
+            this.dispose(); 
             return;
         }
 
-        // B. Intentar login como Cliente
         Optional<Cliente> clienteOpt = this.CLIENTE_NEGOCIO.login(email, password);
         if (clienteOpt.isPresent()) {
-            // ¡Éxito Cliente!
             lblMensaje.setText("");
             JOptionPane.showMessageDialog(this, "Bienvenido Cliente: " + clienteOpt.get().getNombre());
 
-            // Aquí abriríamos el FrmDashboardCliente
-            // FrmDashboardCliente clienteDash = new FrmDashboardCliente(clienteOpt.get()); // Le pasamos el cliente
-            // clienteDash.setVisible(true);
-            this.dispose(); // Cierra la ventana de login
+            this.dispose();
             return;
         }
 
-        // C. Fracaso total
         lblMensaje.setText("Email o contraseña incorrectos.");
     }//GEN-LAST:event_btnLoginActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

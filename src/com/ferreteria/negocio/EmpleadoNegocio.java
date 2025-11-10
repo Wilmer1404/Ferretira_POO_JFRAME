@@ -24,8 +24,6 @@ public class EmpleadoNegocio {
         if (empleadoOpt.isPresent()) {
             Empleado empleado = empleadoOpt.get();
             
-            // En un sistema real, aquí se usaría un Hasher para comparar
-            // if (BCrypt.checkpw(password, empleado.getPasswordHash()) && empleado.isActivo()) {
             if (empleado.getPasswordHash().equals(password) && empleado.isActivo()) {
                 return Optional.of(empleado); 
             }
@@ -58,7 +56,6 @@ public class EmpleadoNegocio {
     }
 
     public String insertar(Empleado emp) {
-        // Validación de campos
         String error = validar(emp);
         if (error != null) {
             return error;
@@ -68,11 +65,6 @@ public class EmpleadoNegocio {
         if (this.DATOS_EMP.buscarPorEmail(emp.getEmail()).isPresent()) {
             return "El email ya se encuentra registrado.";
         }
-        // (Aquí podrías agregar una validación similar para el DNI si lo implementas en el DAO)
-        
-        // (En un sistema real, aquí se "hashea" el password)
-        // String passHashed = BCrypt.hashpw(emp.getPasswordHash(), BCrypt.gensalt());
-        // emp.setPasswordHash(passHashed);
         
         if (this.DATOS_EMP.insertar(emp)) {
             return null; // Éxito
@@ -83,7 +75,6 @@ public class EmpleadoNegocio {
 
 
     public String actualizar(Empleado emp) {
-        // Validación de campos (sin incluir password)
         if (emp.getDni() == null || emp.getDni().trim().isEmpty()) {
             return "El DNI es obligatorio.";
         }
@@ -94,7 +85,6 @@ public class EmpleadoNegocio {
             return "El Email es obligatorio.";
         }
         
-        // (Omitimos validación de password, ya que no se actualiza aquí)
         
         if (this.DATOS_EMP.actualizar(emp)) {
             return null; // Éxito
@@ -105,8 +95,8 @@ public class EmpleadoNegocio {
 
 
     public String desactivar(int id) {
-        if (this.DATOS_EMP.eliminar(id)) { // Tu DAO usa 'eliminar' para desactivar
-            return null; // Éxito
+        if (this.DATOS_EMP.eliminar(id)) { 
+            return null; 
         } else {
             return "Error al desactivar el empleado.";
         }

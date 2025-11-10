@@ -15,8 +15,6 @@ import javax.swing.table.DefaultTableModel;
 
 
 public class FrmGestionProductos extends javax.swing.JInternalFrame {
-
-    // --- 1. Dependencias y Variables de Estado ---
     
     private final ProductoNegocio PRODUCTO_NEGOCIO;
     private final CategoriaNegocio CATEGORIA_NEGOCIO;
@@ -24,48 +22,27 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
     private DefaultTableModel modeloTabla;
     private String accion;
     private int idSeleccionado; 
-    
-    // (Las variables de componentes (lblPrecio, etc.) ya están declaradas
-    // al final del archivo por NetBeans)
 
-    /**
-     * Constructor
-     */
     public FrmGestionProductos() {
-        // 1. Inicializa los componentes visuales (los crea NetBeans)
         initComponents();
         
         this.setSize(900, 600);
         this.setMinimumSize(new java.awt.Dimension(800, 500));
-        
-        // 2. Inicializar la capa de negocio
         this.PRODUCTO_NEGOCIO = new ProductoNegocio();
-        this.CATEGORIA_NEGOCIO = new CategoriaNegocio(); // <--- INICIALIZADO
+        this.CATEGORIA_NEGOCIO = new CategoriaNegocio();
         
-        // 3. Configurar la JTable (Cabeceras)
         this.definirCabecerasTabla();
-        
-        // 4. Cargar datos iniciales en la JTable
         this.listarProductos();
         
-        // 5. Cargar JComboBox (Tipo de Producto y Categorías)
         this.cargarComboTipoProducto();
-        this.cargarComboCategorias();
-        
-        // 6. Configurar el estado inicial del formulario (botones/campos bloqueados)
-        this.gestionarEstadoFormulario("INICIO");
-        
-        // 7. Configurar Spinners para aceptar decimales
+        this.cargarComboCategorias();        
+        this.gestionarEstadoFormulario("INICIO");        
         this.configurarSpinners();
         
-        // 8. Ejecutar la lógica polimórfica de la UI por primera vez
         this.gestionarCamposPolimorficos();
     }
-    // --- 2. Lógica de UI (Helpers de Configuración) ---
-    
     private void definirCabecerasTabla() {
         modeloTabla = new DefaultTableModel() {
-            // Hacemos que la tabla no sea editable por el usuario
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -74,7 +51,7 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
         modeloTabla.addColumn("ID");
         modeloTabla.addColumn("SKU");
         modeloTabla.addColumn("Nombre");
-        modeloTabla.addColumn("Categoría"); // <--- AÑADIDO
+        modeloTabla.addColumn("Categoría"); 
         modeloTabla.addColumn("Tipo");
         modeloTabla.addColumn("Precio");
         modeloTabla.addColumn("Stock");
@@ -98,27 +75,19 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
         // Añadimos el Listener para el polimorfismo
         cmbTipoProducto.addActionListener(e -> gestionarCamposPolimorficos());
     }
-    
-    /**
-     * Carga el JComboBox 'cmbCategoria' desde la Base de Datos.
-     */
+
     private void cargarComboCategorias() {
-        // Usamos DefaultComboBoxModel para guardar los OBJETOS Categoria
         DefaultComboBoxModel<Object> modeloCombo = (DefaultComboBoxModel<Object>) cmbCategoria.getModel();
         modeloCombo.removeAllElements(); // Limpiar items de prueba
         
-        // 1. Pedimos las categorías al Negocio
         List<Categoria> categorias = this.CATEGORIA_NEGOCIO.listar();
         
-        // 2. Iteramos y añadimos el objeto completo
         for (Categoria c : categorias) {
             modeloCombo.addElement(c); 
-            // El JComboBox mostrará c.toString() (que definimos como el nombre)
         }
         
-        // 3. Seteamos el modelo en el JComboBox
         cmbCategoria.setModel(modeloCombo);
-        cmbCategoria.setSelectedIndex(-1); // Sin selección inicial
+        cmbCategoria.setSelectedIndex(-1);
     }
     
     private void configurarSpinners() {
@@ -128,12 +97,10 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
         spinStock.setModel(modelStock);
     }
 
-    /**
-     * Lógica de UI Polimórfica (Habilita/Deshabilita campos)
-     */
+
     private void gestionarCamposPolimorficos() {
         String tipo = (String) cmbTipoProducto.getSelectedItem();
-        if (tipo == null) return; // Si aún no se carga
+        if (tipo == null) return; 
 
         switch (tipo) {
             case "UNITARIO":
@@ -168,10 +135,7 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
                 break;
         }
     }
-    
-    /**
-     * Controla qué botones y campos están habilitados.
-     */
+
     private void gestionarEstadoFormulario(String estado) {
         switch (estado) {
             case "INICIO":
@@ -203,10 +167,7 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
                 break;
         }
     }
-    
-    /**
-     * Helper para limpiar y (des)habilitar campos.
-     */
+
     private void limpiarYBloquearCampos(boolean bloquear) {
         txtNombre.setText("");
         txtSku.setText("");
@@ -224,11 +185,6 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
         cmbCategoria.setEnabled(!bloquear);
     }
 
-    // --- 3. Lógica de Negocio (Eventos de la Vista) ---
-    
-    /**
-     * Carga los productos desde la capa de Negocio a la JTable.
-     */
     private void listarProductos() {
         try {
             modeloTabla.setRowCount(0);
@@ -237,12 +193,11 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
             if (lista.isEmpty()) return;
 
             for (ItemVendible item : lista) {
-                Object[] fila = new Object[8]; // Aumentado a 8 columnas
+                Object[] fila = new Object[8]; 
                 fila[0] = item.getProductoId();
                 fila[1] = item.getSku();
                 fila[2] = item.getNombre();
                 
-                // Lógica para obtener el nombre de la categoría
                 fila[3] = (item.getCategoria() != null) ? item.getCategoria().getNombre() : "S/C";
                 
                 fila[4] = item.getClass().getSimpleName();
@@ -260,11 +215,6 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
         }
     }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -534,14 +484,13 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_txtUnidadMedidaActionPerformed
 
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
-        this.accion = "guardar"; // "guardar" significa insertar uno nuevo
+        this.accion = "guardar"; 
         btnGuardar.setText("Guardar");
         this.gestionarEstadoFormulario("NUEVO");
         txtNombre.requestFocus();
     }//GEN-LAST:event_btnNuevoActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        // 1. Validar campos
         if (txtNombre.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "El campo Nombre es obligatorio.", "Validación", JOptionPane.WARNING_MESSAGE);
             txtNombre.requestFocus();
@@ -558,7 +507,6 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
             return;
         }
         
-        // 2. Crear el objeto polimórfico (Patrón Factory en la Vista)
         ItemVendible item;
         String tipo = (String) cmbTipoProducto.getSelectedItem();
         
@@ -586,29 +534,25 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
                 return;
         }
         
-        // 3. Llenar los datos comunes (Heredados)
         item.setNombre(txtNombre.getText().trim());
         item.setSku(txtSku.getText().trim());
         item.setDescripcion(txtDescripcion.getText());
         item.setActivo(true);
-        // Obtenemos el OBJETO Categoria del ComboBox
         item.setCategoria((Categoria)cmbCategoria.getSelectedItem());
         
         
-        // 4. Enviar a la capa de Negocio (Insertar o Actualizar)
         String respuesta = null;
         
         if (this.accion.equals("guardar")) {
             respuesta = this.PRODUCTO_NEGOCIO.insertar(item);
-        } else { // "editar"
+        } else { 
             item.setProductoId(this.idSeleccionado);
             respuesta = this.PRODUCTO_NEGOCIO.actualizar(item);
         }
         
-        // 5. Interpretar la respuesta del Negocio
         if (respuesta == null) {
             JOptionPane.showMessageDialog(this, "Producto guardado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            this.listarProductos(); // Recargar la tabla
+            this.listarProductos();
             this.gestionarEstadoFormulario("INICIO");
         } else {
             JOptionPane.showMessageDialog(this, respuesta, "Error de Negocio", JOptionPane.ERROR_MESSAGE);
@@ -639,7 +583,7 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
                 JOptionPane.WARNING_MESSAGE);
         
         if (confirm != JOptionPane.YES_OPTION) {
-            return; // El usuario canceló
+            return; 
         }
         
         String respuesta = this.PRODUCTO_NEGOCIO.desactivar(this.idSeleccionado);

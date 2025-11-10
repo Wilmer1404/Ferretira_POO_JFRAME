@@ -10,7 +10,6 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
 
     public FrmDashboardAdmin() {
         initComponents();
-        //this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setTitle("Panel de Administración - FerreteriaApp");
     }
 
@@ -102,18 +101,13 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void itemGestionProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemGestionProductosActionPerformed
-        // 1. Creas la instancia del formulario
         FrmGestionProductos frm = new FrmGestionProductos();
 
-        // 2. Usamos tu método para centrarlo y añadirlo
         abrirVentanaInterna(frm);
     }//GEN-LAST:event_itemGestionProductosActionPerformed
 
     private void itemGestionEmpleadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemGestionEmpleadosActionPerformed
-        // 1. Creas la instancia del formulario
         FrmGestionEmpleados frm = new FrmGestionEmpleados();
-
-        // 2. Usamos tu método para centrarlo y añadirlo
         abrirVentanaInterna(frm);
     }//GEN-LAST:event_itemGestionEmpleadosActionPerformed
 
@@ -147,20 +141,17 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
     }
 
     private void abrirVentanaInterna(JInternalFrame frame) {
-        // Verificar si ya está abierto
         for (JInternalFrame openFrame : desktopPrincipal.getAllFrames()) {
             if (openFrame.getClass().equals(frame.getClass())) {
                 openFrame.toFront();
                 try {
                     openFrame.setSelected(true);
                 } catch (java.beans.PropertyVetoException e) {
-                    // Ignorar
                 }
                 return;
             }
         }
 
-        // Centrar la ventana interna
         Dimension desktopSize = desktopPrincipal.getSize();
         Dimension frameSize = frame.getSize();
         frame.setLocation(
@@ -172,9 +163,8 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
         frame.setVisible(true);
 
         try {
-            frame.setMaximum(true);  // Maximizar automáticamente
+            frame.setMaximum(true);  
         } catch (java.beans.PropertyVetoException e) {
-            // Si no se puede maximizar, no pasa nada
         }
     }
 
