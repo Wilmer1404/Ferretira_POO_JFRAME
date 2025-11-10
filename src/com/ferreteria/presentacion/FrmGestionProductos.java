@@ -72,13 +72,12 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
         cmbTipoProducto.addItem("UNITARIO");
         cmbTipoProducto.addItem("GRANEL");
         cmbTipoProducto.addItem("SERVICIO");
-        // Añadimos el Listener para el polimorfismo
         cmbTipoProducto.addActionListener(e -> gestionarCamposPolimorficos());
     }
 
     private void cargarComboCategorias() {
         DefaultComboBoxModel<Object> modeloCombo = (DefaultComboBoxModel<Object>) cmbCategoria.getModel();
-        modeloCombo.removeAllElements(); // Limpiar items de prueba
+        modeloCombo.removeAllElements();
         
         List<Categoria> categorias = this.CATEGORIA_NEGOCIO.listar();
         

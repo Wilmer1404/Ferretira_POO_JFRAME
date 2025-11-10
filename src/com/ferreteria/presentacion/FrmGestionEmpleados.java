@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
-    
+
     private final EmpleadoNegocio EMPLEADO_NEGOCIO;
     private DefaultTableModel modeloTabla;
     private String accion;
@@ -25,7 +25,7 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
         this.listarEmpleados();
         this.gestionarEstadoFormulario("INICIO");
     }
-    
+
     private void definirCabecerasTabla() {
         modeloTabla = new DefaultTableModel() {
             @Override
@@ -42,30 +42,29 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
         modeloTabla.addColumn("Estado");
 
         this.tablaEmpleados.setModel(modeloTabla);
-       
+
         this.tablaEmpleados.getColumnModel().getColumn(0).setPreferredWidth(40);
         this.tablaEmpleados.getColumnModel().getColumn(1).setPreferredWidth(80);
         this.tablaEmpleados.getColumnModel().getColumn(2).setPreferredWidth(120);
         this.tablaEmpleados.getColumnModel().getColumn(3).setPreferredWidth(150);
         this.tablaEmpleados.getColumnModel().getColumn(4).setPreferredWidth(180);
-        this.tablaEmpleados.getColumnModel().getColumn(5).setPreferredWidth(80); 
+        this.tablaEmpleados.getColumnModel().getColumn(5).setPreferredWidth(80);
         this.tablaEmpleados.getColumnModel().getColumn(6).setPreferredWidth(70);
-        
-        
+
     }
-    
+
     private void cargarCombos() {
         DefaultComboBoxModel<String> modeloRol = (DefaultComboBoxModel<String>) cmbRol.getModel();
         modeloRol.removeAllElements();
         modeloRol.addElement("ADMIN");
         modeloRol.addElement("VENDEDOR");
-        
+
         DefaultComboBoxModel<String> modeloActivo = (DefaultComboBoxModel<String>) cmbActivo.getModel();
         modeloActivo.removeAllElements();
         modeloActivo.addElement("Activo");
         modeloActivo.addElement("Inactivo");
     }
-    
+
     private void gestionarEstadoFormulario(String estado) {
         switch (estado) {
             case "INICIO":
@@ -86,7 +85,7 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
                 btnDesactivar.setEnabled(false);
                 btnCancelar.setEnabled(true);
                 limpiarYBloquearCampos(false);
-                txtPassword.setEnabled(true); 
+                txtPassword.setEnabled(true);
                 break;
             case "EDITAR":
                 this.accion = "editar";
@@ -97,7 +96,7 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
                 btnDesactivar.setEnabled(false);
                 btnCancelar.setEnabled(true);
                 limpiarYBloquearCampos(false);
-                txtPassword.setEnabled(false); 
+                txtPassword.setEnabled(false);
                 break;
             case "SELECCIONADO":
                 btnNuevo.setEnabled(true);
@@ -123,11 +122,11 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
         txtNombre.setEnabled(!bloquear);
         txtApellidos.setEnabled(!bloquear);
         txtEmail.setEnabled(!bloquear);
-        txtPassword.setEnabled(!bloquear); 
+        txtPassword.setEnabled(!bloquear);
         cmbRol.setEnabled(!bloquear);
         cmbActivo.setEnabled(!bloquear);
-        
-        if(bloquear) {
+
+        if (bloquear) {
             txtPassword.setEnabled(false);
         }
     }
@@ -159,12 +158,6 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
                     "Error de Carga", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
-    
-    
-    
-    
-    
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -215,6 +208,11 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
         cmbActivo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Activo", "Inactivo" }));
 
         btnNuevo.setText("Nuevo");
+        btnNuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevoActionPerformed(evt);
+            }
+        });
 
         btnGuardar.setText("Guardar");
         btnGuardar.addActionListener(new java.awt.event.ActionListener() {
@@ -298,24 +296,21 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panelFormularioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelFormularioLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(6, 6, 6)
                         .addComponent(lblPassword)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panelFormularioLayout.createSequentialGroup()
-                        .addGroup(panelFormularioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(panelFormularioLayout.createSequentialGroup()
-                                .addComponent(lblActivo)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cmbActivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(panelFormularioLayout.createSequentialGroup()
-                                .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(lblApellidos)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtApellidos, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(lblActivo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cmbActivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panelFormularioLayout.createSequentialGroup()
+                        .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblApellidos)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtApellidos, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(15, Short.MAX_VALUE))
             .addComponent(panelAcciones, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         panelFormularioLayout.setVerticalGroup(
@@ -363,17 +358,15 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(panelFormulario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addComponent(scrollTabla)
+            .addComponent(scrollTabla, javax.swing.GroupLayout.DEFAULT_SIZE, 501, Short.MAX_VALUE)
+            .addComponent(panelFormulario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(panelFormulario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollTabla, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                .addComponent(scrollTabla, javax.swing.GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -381,7 +374,6 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        // 1. Validar campos
         if (txtDni.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "El campo DNI es obligatorio.", "Validación", JOptionPane.WARNING_MESSAGE);
             txtDni.requestFocus();
@@ -398,7 +390,7 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
             return;
         }
         if (this.accion.equals("guardar") && new String(txtPassword.getPassword()).trim().isEmpty()) {
-             JOptionPane.showMessageDialog(this, "El campo Contraseña es obligatorio.", "Validación", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "El campo Contraseña es obligatorio.", "Validación", JOptionPane.WARNING_MESSAGE);
             txtPassword.requestFocus();
             return;
         }
@@ -416,7 +408,7 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
         if (this.accion.equals("guardar")) {
             emp.setPasswordHash(new String(txtPassword.getPassword()));
             respuesta = this.EMPLEADO_NEGOCIO.insertar(emp);
-        } else { 
+        } else {
             emp.setEmpleadoId(this.idSeleccionado);
             respuesta = this.EMPLEADO_NEGOCIO.actualizar(emp);
         }
@@ -435,11 +427,11 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this, "Debe seleccionar un empleado de la tabla.", "Validación", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
+
         int fila = this.tablaEmpleados.getSelectedRow();
         if (fila < 0) { 
-             JOptionPane.showMessageDialog(this, "Error al seleccionar la fila.", "Error", JOptionPane.ERROR_MESSAGE);
-             return;
+            JOptionPane.showMessageDialog(this, "Error al seleccionar la fila.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
         txtDni.setText((String) modeloTabla.getValueAt(fila, 1));
@@ -448,7 +440,7 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
         txtEmail.setText((String) modeloTabla.getValueAt(fila, 4));
         cmbRol.setSelectedItem((String) modeloTabla.getValueAt(fila, 5));
         cmbActivo.setSelectedItem((String) modeloTabla.getValueAt(fila, 6));
-        
+
         this.gestionarEstadoFormulario("EDITAR");
         txtDni.requestFocus();
     }//GEN-LAST:event_btnEditarActionPerformed
@@ -466,7 +458,7 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
                 JOptionPane.WARNING_MESSAGE);
 
         if (confirm != JOptionPane.YES_OPTION) {
-            return; 
+            return;
         }
 
         String respuesta = this.EMPLEADO_NEGOCIO.desactivar(this.idSeleccionado);
@@ -484,13 +476,20 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
         this.gestionarEstadoFormulario("INICIO");
     }//GEN-LAST:event_btnCancelarActionPerformed
 
-    
-    
+    private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
+        this.gestionarEstadoFormulario("NUEVO");
+        txtDni.requestFocus();
+    }//GEN-LAST:event_btnNuevoActionPerformed
+
     private void tablaEmpleadosMousePressed(java.awt.event.MouseEvent evt) {
-        if (modeloTabla.getRowCount() == 0) return;
-        
+        if (modeloTabla.getRowCount() == 0) {
+            return;
+        }
+
         int fila = this.tablaEmpleados.getSelectedRow();
-        if (fila < 0) return; 
+        if (fila < 0) {
+            return;
+        }
 
         try {
             this.idSeleccionado = (int) this.modeloTabla.getValueAt(fila, 0);
@@ -503,15 +502,12 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
             txtEmail.setText((String) modeloTabla.getValueAt(fila, 4));
             cmbRol.setSelectedItem((String) modeloTabla.getValueAt(fila, 5));
             cmbActivo.setSelectedItem((String) modeloTabla.getValueAt(fila, 6));
-            
+
         } catch (Exception e) {
-             JOptionPane.showMessageDialog(this, "Error al seleccionar: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error al seleccionar: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
-    
-    
-    
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;

@@ -10,6 +10,8 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
 
     public FrmDashboardAdmin() {
         initComponents();
+        this.setSize(1050, 700);
+        this.setLocationRelativeTo(null);
         this.setTitle("Panel de Administración - FerreteriaApp");
     }
 
@@ -112,7 +114,8 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
     }//GEN-LAST:event_itemGestionEmpleadosActionPerformed
 
     private void itemReporteVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemReporteVentasActionPerformed
-        // TODO add your handling code here:
+        FrmReporteVentas frm = new FrmReporteVentas();
+        abrirVentanaInterna(frm);
     }//GEN-LAST:event_itemReporteVentasActionPerformed
 
     private void itemSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemSalirActionPerformed

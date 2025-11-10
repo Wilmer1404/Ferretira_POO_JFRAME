@@ -1,7 +1,7 @@
 package com.ferreteria.datos.interfaces;
 
 import com.ferreteria.entidades.Cliente;
-import java.util.Optional; // Usamos Optional para un manejo moderno de nulos
+import java.util.Optional;
 
 public interface IClienteDAO extends ICrudDAO<Cliente, Integer> {
 

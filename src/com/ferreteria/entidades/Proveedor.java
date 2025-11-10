@@ -8,7 +8,6 @@ public class Proveedor {
     private String telefono;
     private boolean activo;
     
-    // Generar Getters/Setters
 
     public int getProveedorId() {
         return proveedorId;
