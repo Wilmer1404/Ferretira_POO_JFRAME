@@ -79,7 +79,7 @@ public class EmpleadoDAOImpl implements IEmpleadoDAO {
             ps.setString(2, entidad.getNombre());
             ps.setString(3, entidad.getApellidos());
             ps.setString(4, entidad.getEmail());
-            ps.setString(5, entidad.getPasswordHash()); // Hash generado en Negocio
+            ps.setString(5, entidad.getPasswordHash());
             ps.setString(6, entidad.getRol());
             ps.setBoolean(7, entidad.isActivo());
             return ps.executeUpdate() > 0;

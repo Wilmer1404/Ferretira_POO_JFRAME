@@ -8,7 +8,7 @@ public class Cliente {
     private String dni;
     private String nombre;
     private String apellidos;
-    private String direccionPrincipal;
+    private String direccion;
     private String email;
     private String telefono;
     private String passwordHash; 
@@ -48,12 +48,12 @@ public class Cliente {
         this.apellidos = apellidos;
     }
 
-    public String getDireccionPrincipal() {
-        return direccionPrincipal;
+    public String getDireccion() {
+        return direccion;
     }
 
-    public void setDireccionPrincipal(String direccionPrincipal) {
-        this.direccionPrincipal = direccionPrincipal;
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
     }
 
     public String getEmail() {
@@ -87,6 +87,4 @@ public class Cliente {
     public void setFechaRegistro(LocalDateTime fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
-    
-    
 }

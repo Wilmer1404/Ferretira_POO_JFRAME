@@ -12,13 +12,10 @@ public class FrmRegistroCliente extends javax.swing.JFrame {
 
     public FrmRegistroCliente() {
         initComponents();
-        // 1. Inicializar la capa de negocio
         this.CLIENTE_NEGOCIO = new ClienteNegocio();
 
-        // 2. Centrar la ventana
         this.setLocationRelativeTo(null);
 
-        // 3. Poner título
         this.setTitle("Registro de Nuevo Cliente");
     }
 
@@ -184,62 +181,51 @@ public class FrmRegistroCliente extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
-        // 1. Obtener datos de los campos
         String dni = txtDni.getText().trim();
         String nombre = txtNombre.getText().trim();
         String apellidos = txtApellidos.getText().trim();
         String email = txtEmail.getText().trim();
         String telefono = txtTelefono.getText().trim();
-        String direccion = txtDireccion.getText().trim();
+        String direccion = txtDireccion.getText().trim(); 
         String pass1 = new String(txtPassword.getPassword());
         String pass2 = new String(txtPasswordConfirmar.getPassword());
 
-        // 2. Validaciones de la Vista (campos vacíos)
         if (dni.isEmpty() || nombre.isEmpty() || apellidos.isEmpty() || email.isEmpty() || pass1.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Los campos DNI, Nombre, Apellidos, Email y Contraseña son obligatorios.", "Validación", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // 3. Validaciones de la Vista (contraseñas coinciden)
         if (!pass1.equals(pass2)) {
             JOptionPane.showMessageDialog(this, "Las contraseñas no coinciden.", "Validación", JOptionPane.WARNING_MESSAGE);
             txtPassword.requestFocus();
             return;
         }
 
-        // 4. Crear el objeto Cliente
         Cliente cliente = new Cliente();
         cliente.setDni(dni);
         cliente.setNombre(nombre);
         cliente.setApellidos(apellidos);
         cliente.setEmail(email);
         cliente.setTelefono(telefono);
-        cliente.setDireccionPrincipal(direccion); // Asegúrate que tu entidad Cliente tenga este método
-        cliente.setPasswordHash(pass1); // Pasamos la contraseña (la capa de Negocio debería "hashearla")
+        cliente.setDireccion(direccion); 
+        cliente.setPasswordHash(pass1); 
 
-        // 5. Enviar a la capa de Negocio para registrar
         String respuesta = this.CLIENTE_NEGOCIO.registrar(cliente);
 
-        // 6. Interpretar la respuesta
         if (respuesta == null) {
-            // Éxito
             JOptionPane.showMessageDialog(this, "¡Registro exitoso! Ahora puede iniciar sesión.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-
-            // Cerrar esta ventana y volver al Login
+            
             this.dispose();
             FrmLogin loginForm = new FrmLogin();
             loginForm.setVisible(true);
         } else {
-            // Error (mostramos el mensaje de la capa de negocio)
             JOptionPane.showMessageDialog(this, respuesta, "Error de Registro", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        // Cierra esta ventana de registro
         this.dispose();
         
-        // Crea y muestra la ventana de Login
         FrmLogin loginForm = new FrmLogin();
         loginForm.setVisible(true);
     }//GEN-LAST:event_btnCancelarActionPerformed

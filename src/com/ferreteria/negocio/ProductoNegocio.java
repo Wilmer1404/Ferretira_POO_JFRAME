@@ -88,6 +88,10 @@ public class ProductoNegocio {
         }
     }
     
+    public boolean actualizarStock(ItemVendible item) {
+        return this.DATOS_PROD.actualizarStock(item);
+    }   
+    
     
     private String validar(ItemVendible item) {
         if (item.getNombre() == null || item.getNombre().trim().isEmpty()) {

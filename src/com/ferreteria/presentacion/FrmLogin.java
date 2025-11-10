@@ -143,7 +143,14 @@ public class FrmLogin extends javax.swing.JFrame {
         Optional<Cliente> clienteOpt = this.CLIENTE_NEGOCIO.login(email, password);
         if (clienteOpt.isPresent()) {
             lblMensaje.setText("");
-            JOptionPane.showMessageDialog(this, "Bienvenido Cliente: " + clienteOpt.get().getNombre());
+
+            Cliente clienteLogueado = clienteOpt.get();
+
+            FrmDashboardCliente clienteDash = new FrmDashboardCliente(clienteLogueado);
+
+            clienteDash.setSize(1280, 720);
+            clienteDash.setLocationRelativeTo(null);
+            clienteDash.setVisible(true);
 
             this.dispose();
             return;
