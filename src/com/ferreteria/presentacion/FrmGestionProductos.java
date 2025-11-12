@@ -15,32 +15,33 @@ import javax.swing.table.DefaultTableModel;
 
 
 public class FrmGestionProductos extends javax.swing.JInternalFrame {
-    
+
     private final ProductoNegocio PRODUCTO_NEGOCIO;
     private final CategoriaNegocio CATEGORIA_NEGOCIO;
-    
+
     private DefaultTableModel modeloTabla;
     private String accion;
-    private int idSeleccionado; 
+    private int idSeleccionado;
 
     public FrmGestionProductos() {
         initComponents();
-        
+
         this.setSize(900, 600);
         this.setMinimumSize(new java.awt.Dimension(800, 500));
         this.PRODUCTO_NEGOCIO = new ProductoNegocio();
         this.CATEGORIA_NEGOCIO = new CategoriaNegocio();
-        
+
         this.definirCabecerasTabla();
         this.listarProductos();
-        
+
         this.cargarComboTipoProducto();
-        this.cargarComboCategorias();        
-        this.gestionarEstadoFormulario("INICIO");        
+        this.cargarComboCategorias();
+        this.gestionarEstadoFormulario("INICIO");
         this.configurarSpinners();
-        
+
         this.gestionarCamposPolimorficos();
     }
+
     private void definirCabecerasTabla() {
         modeloTabla = new DefaultTableModel() {
             @Override
@@ -51,14 +52,14 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
         modeloTabla.addColumn("ID");
         modeloTabla.addColumn("SKU");
         modeloTabla.addColumn("Nombre");
-        modeloTabla.addColumn("Categoría"); 
+        modeloTabla.addColumn("Categoría");
         modeloTabla.addColumn("Tipo");
         modeloTabla.addColumn("Precio");
         modeloTabla.addColumn("Stock");
         modeloTabla.addColumn("Unidad");
-        
+
         this.tablaProductos.setModel(modeloTabla);
-        
+
         this.tablaProductos.getColumnModel().getColumn(0).setPreferredWidth(40);
         this.tablaProductos.getColumnModel().getColumn(1).setPreferredWidth(80);
         this.tablaProductos.getColumnModel().getColumn(2).setPreferredWidth(200);
@@ -66,7 +67,7 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
         this.tablaProductos.getColumnModel().getColumn(4).setPreferredWidth(100);
         this.tablaProductos.getColumnModel().getColumn(5).setPreferredWidth(80);
     }
-    
+
     private void cargarComboTipoProducto() {
         cmbTipoProducto.removeAllItems();
         cmbTipoProducto.addItem("UNITARIO");
@@ -78,17 +79,17 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
     private void cargarComboCategorias() {
         DefaultComboBoxModel<Object> modeloCombo = (DefaultComboBoxModel<Object>) cmbCategoria.getModel();
         modeloCombo.removeAllElements();
-        
+
         List<Categoria> categorias = this.CATEGORIA_NEGOCIO.listar();
-        
+
         for (Categoria c : categorias) {
-            modeloCombo.addElement(c); 
+            modeloCombo.addElement(c);
         }
-        
+
         cmbCategoria.setModel(modeloCombo);
         cmbCategoria.setSelectedIndex(-1);
     }
-    
+
     private void configurarSpinners() {
         SpinnerNumberModel modelPrecio = new SpinnerNumberModel(0.0, 0.0, 10000.0, 0.50);
         spinPrecio.setModel(modelPrecio);
@@ -96,10 +97,11 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
         spinStock.setModel(modelStock);
     }
 
-
     private void gestionarCamposPolimorficos() {
         String tipo = (String) cmbTipoProducto.getSelectedItem();
-        if (tipo == null) return; 
+        if (tipo == null) {
+            return;
+        }
 
         switch (tipo) {
             case "UNITARIO":
@@ -109,7 +111,7 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
                 spinPrecio.setEnabled(true);
                 spinStock.setEnabled(true);
                 txtUnidadMedida.setEnabled(false);
-                ((SpinnerNumberModel)spinStock.getModel()).setStepSize(1.0);
+                ((SpinnerNumberModel) spinStock.getModel()).setStepSize(1.0);
                 txtUnidadMedida.setText("Unidad");
                 break;
             case "GRANEL":
@@ -118,8 +120,8 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
                 lblUnidadMedida.setText("Unidad Medida:");
                 spinPrecio.setEnabled(true);
                 spinStock.setEnabled(true);
-                txtUnidadMedida.setEnabled(true); 
-                ((SpinnerNumberModel)spinStock.getModel()).setStepSize(0.5);
+                txtUnidadMedida.setEnabled(true);
+                ((SpinnerNumberModel) spinStock.getModel()).setStepSize(0.5);
                 txtUnidadMedida.setText("");
                 break;
             case "SERVICIO":
@@ -127,7 +129,7 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
                 lblStock.setText("Stock:");
                 lblUnidadMedida.setText("Unidad:");
                 spinPrecio.setEnabled(true);
-                spinStock.setEnabled(false); 
+                spinStock.setEnabled(false);
                 txtUnidadMedida.setEnabled(false);
                 spinStock.setValue(0.0);
                 txtUnidadMedida.setText("N/A");
@@ -136,52 +138,67 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
     }
 
     private void gestionarEstadoFormulario(String estado) {
-        switch (estado) {
-            case "INICIO":
-                this.accion = "guardar";
-                btnNuevo.setEnabled(true);
-                btnGuardar.setEnabled(false);
-                btnEditar.setEnabled(false);
-                btnDesactivar.setEnabled(false);
-                btnCancelar.setEnabled(false);
-                limpiarYBloquearCampos(true);
-                break;
-            case "NUEVO":
-            case "EDITAR":
-                btnNuevo.setEnabled(false);
-                btnGuardar.setEnabled(true);
-                btnEditar.setEnabled(false);
-                btnDesactivar.setEnabled(false);
-                btnCancelar.setEnabled(true);
-                limpiarYBloquearCampos(false);
-                gestionarCamposPolimorficos();
-                break;
-            case "SELECCIONADO":
-                btnNuevo.setEnabled(true);
-                btnGuardar.setEnabled(false);
-                btnEditar.setEnabled(true);
-                btnDesactivar.setEnabled(true);
-                btnCancelar.setEnabled(false);
-                limpiarYBloquearCampos(true);
-                break;
-        }
+    switch (estado) {
+        case "INICIO":
+            this.accion = "guardar";
+            btnNuevo.setEnabled(true);
+            btnGuardar.setEnabled(false);
+            btnEditar.setEnabled(false);
+            btnDesactivar.setEnabled(false);
+            btnCancelar.setEnabled(false);
+            limpiarFormulario(); // CORRECTO: Llama a limpiar (sin argumentos)
+            break;
+            
+        case "NUEVO":
+            this.accion = "guardar";
+            btnNuevo.setEnabled(false);
+            btnGuardar.setEnabled(true);
+            btnGuardar.setText("Guardar");
+            btnEditar.setEnabled(false);
+            btnDesactivar.setEnabled(false);
+            btnCancelar.setEnabled(true);
+            limpiarFormulario(); // CORRECTO: Llama a limpiar (sin argumentos)
+            bloquearControles(false); // Desbloquea para el nuevo ingreso
+            gestionarCamposPolimorficos();
+            txtNombre.requestFocus();
+            break;
+            
+        case "EDITAR":
+            this.accion = "editar";
+            btnNuevo.setEnabled(false);
+            btnGuardar.setEnabled(true);
+            btnGuardar.setText("Actualizar");
+            btnEditar.setEnabled(false);
+            btnDesactivar.setEnabled(false);
+            btnCancelar.setEnabled(true);
+            bloquearControles(false); // CORRECTO: Solo desbloquea, NO limpia
+            gestionarCamposPolimorficos();
+            txtNombre.requestFocus();
+            break;
+            
+        case "SELECCIONADO":
+            btnNuevo.setEnabled(true);
+            btnGuardar.setEnabled(false);
+            btnEditar.setEnabled(true);
+            btnDesactivar.setEnabled(true);
+            btnCancelar.setEnabled(false);
+            bloquearControles(true); // CORRECTO: Solo bloquea, NO limpia
+            break;
     }
+}
 
-    private void limpiarYBloquearCampos(boolean bloquear) {
+    private void limpiarFormulario() {
         txtNombre.setText("");
         txtSku.setText("");
         txtDescripcion.setText("");
         spinPrecio.setValue(0.0);
         spinStock.setValue(0.0);
         txtUnidadMedida.setText("");
-        cmbTipoProducto.setSelectedIndex(0);
+        cmbTipoProducto.setSelectedIndex(0); // O -1 si prefiere
         cmbCategoria.setSelectedIndex(-1);
-        
-        txtNombre.setEnabled(!bloquear);
-        txtSku.setEnabled(!bloquear);
-        txtDescripcion.setEnabled(!bloquear);
-        cmbTipoProducto.setEnabled(!bloquear);
-        cmbCategoria.setEnabled(!bloquear);
+
+        // Al limpiar, siempre bloqueamos
+        bloquearControles(true);
     }
 
     private void listarProductos() {
@@ -189,28 +206,86 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
             modeloTabla.setRowCount(0);
             List<ItemVendible> lista = this.PRODUCTO_NEGOCIO.listar();
 
-            if (lista.isEmpty()) return;
+            if (lista.isEmpty()) {
+                return;
+            }
 
             for (ItemVendible item : lista) {
-                Object[] fila = new Object[8]; 
+                Object[] fila = new Object[8];
                 fila[0] = item.getProductoId();
                 fila[1] = item.getSku();
                 fila[2] = item.getNombre();
-                
+
                 fila[3] = (item.getCategoria() != null) ? item.getCategoria().getNombre() : "S/C";
-                
+
                 fila[4] = item.getClass().getSimpleName();
                 fila[5] = item.calcularSubtotal(1);
                 fila[6] = (item instanceof Servicio) ? "Infinito" : item.obtenerStock();
                 fila[7] = item.obtenerUnidadParaGUI();
-                
+
                 modeloTabla.addRow(fila);
             }
 
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, 
-                    "Error al listar productos: " + ex.getMessage(), 
+            JOptionPane.showMessageDialog(this,
+                    "Error al listar productos: " + ex.getMessage(),
                     "Error de Carga", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void cargarItemEnFormulario(ItemVendible item) {
+    if (item == null) {
+        // limpiarFormulario(true); // ESTA ERA SU LÍNEA INCORRECTA
+        limpiarFormulario(); // ESTA ES LA CORRECCIÓN
+        return;
+    }
+
+    txtNombre.setText(item.getNombre());
+    txtSku.setText(item.getSku());
+    txtDescripcion.setText(item.getDescripcion());
+
+    // Esto ahora funcionará gracias a los métodos equals/hashCode
+    cmbCategoria.setSelectedItem(item.getCategoria());
+
+    if (item instanceof ProductoUnitario) {
+        ProductoUnitario pu = (ProductoUnitario) item;
+        cmbTipoProducto.setSelectedItem("UNITARIO");
+        spinPrecio.setValue(pu.getPrecioUnitario());
+        spinStock.setValue(pu.getStockActual());
+
+    } else if (item instanceof ProductoAGranel) {
+        ProductoAGranel pg = (ProductoAGranel) item;
+        cmbTipoProducto.setSelectedItem("GRANEL");
+        spinPrecio.setValue(pg.getPrecioPorMedida());
+        spinStock.setValue(pg.getStockMedido());
+        txtUnidadMedida.setText(pg.getUnidadMedida());
+
+    } else if (item instanceof Servicio) {
+        Servicio s = (Servicio) item;
+        cmbTipoProducto.setSelectedItem("SERVICIO");
+        spinPrecio.setValue(s.getTarifaServicio());
+        spinStock.setValue(0.0); // Los servicios no tienen stock editable
+    }
+
+    // Actualiza los labels y estados de los spinners
+    gestionarCamposPolimorficos();
+}
+
+    private void bloquearControles(boolean bloquear) {
+        txtNombre.setEnabled(!bloquear);
+        txtSku.setEnabled(!bloquear);
+        txtDescripcion.setEnabled(!bloquear);
+        cmbTipoProducto.setEnabled(!bloquear);
+        cmbCategoria.setEnabled(!bloquear);
+
+        // Gestionar spinners basado en el tipo de producto
+        if (bloquear) {
+            spinPrecio.setEnabled(false);
+            spinStock.setEnabled(false);
+            txtUnidadMedida.setEnabled(false);
+        } else {
+            // Si se desbloquea, respetar la lógica polimórfica
+            gestionarCamposPolimorficos();
         }
     }
 
@@ -448,6 +523,11 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tablaProductos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tablaProductosMousePressed(evt);
+            }
+        });
         scrollTabla.setViewportView(tablaProductos);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -483,7 +563,7 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_txtUnidadMedidaActionPerformed
 
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
-        this.accion = "guardar"; 
+        this.accion = "guardar";
         btnGuardar.setText("Guardar");
         this.gestionarEstadoFormulario("NUEVO");
         txtNombre.requestFocus();
@@ -505,50 +585,49 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
             cmbCategoria.requestFocus();
             return;
         }
-        
+
         ItemVendible item;
         String tipo = (String) cmbTipoProducto.getSelectedItem();
-        
+
         switch (tipo) {
             case "UNITARIO":
                 ProductoUnitario pu = new ProductoUnitario();
-                pu.setPrecioUnitario(((Number)spinPrecio.getValue()).doubleValue());
-                pu.setStockActual(((Number)spinStock.getValue()).intValue());
+                pu.setPrecioUnitario(((Number) spinPrecio.getValue()).doubleValue());
+                pu.setStockActual(((Number) spinStock.getValue()).intValue());
                 item = pu;
                 break;
             case "GRANEL":
                 ProductoAGranel pg = new ProductoAGranel();
-                pg.setPrecioPorMedida(((Number)spinPrecio.getValue()).doubleValue());
-                pg.setStockMedido(((Number)spinStock.getValue()).doubleValue());
+                pg.setPrecioPorMedida(((Number) spinPrecio.getValue()).doubleValue());
+                pg.setStockMedido(((Number) spinStock.getValue()).doubleValue());
                 pg.setUnidadMedida(txtUnidadMedida.getText().trim());
                 item = pg;
                 break;
             case "SERVICIO":
                 Servicio s = new Servicio();
-                s.setTarifaServicio(((Number)spinPrecio.getValue()).doubleValue());
+                s.setTarifaServicio(((Number) spinPrecio.getValue()).doubleValue());
                 item = s;
                 break;
             default:
                 JOptionPane.showMessageDialog(this, "Tipo de producto no válido.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
         }
-        
+
         item.setNombre(txtNombre.getText().trim());
         item.setSku(txtSku.getText().trim());
         item.setDescripcion(txtDescripcion.getText());
         item.setActivo(true);
-        item.setCategoria((Categoria)cmbCategoria.getSelectedItem());
-        
-        
+        item.setCategoria((Categoria) cmbCategoria.getSelectedItem());
+
         String respuesta = null;
-        
+
         if (this.accion.equals("guardar")) {
             respuesta = this.PRODUCTO_NEGOCIO.insertar(item);
-        } else { 
+        } else {
             item.setProductoId(this.idSeleccionado);
             respuesta = this.PRODUCTO_NEGOCIO.actualizar(item);
         }
-        
+
         if (respuesta == null) {
             JOptionPane.showMessageDialog(this, "Producto guardado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             this.listarProductos();
@@ -574,19 +653,19 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this, "Debe seleccionar un producto de la tabla.", "Validación", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
-        int confirm = JOptionPane.showConfirmDialog(this, 
-                "¿Seguro que desea desactivar este producto?\nID: " + this.idSeleccionado + " - " + txtNombre.getText(), 
-                "Confirmar Desactivación", 
-                JOptionPane.YES_NO_OPTION, 
+
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "¿Seguro que desea desactivar este producto?\nID: " + this.idSeleccionado + " - " + txtNombre.getText(),
+                "Confirmar Desactivación",
+                JOptionPane.YES_NO_OPTION,
                 JOptionPane.WARNING_MESSAGE);
-        
+
         if (confirm != JOptionPane.YES_OPTION) {
-            return; 
+            return;
         }
-        
+
         String respuesta = this.PRODUCTO_NEGOCIO.desactivar(this.idSeleccionado);
-        
+
         if (respuesta == null) {
             JOptionPane.showMessageDialog(this, "Producto desactivado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             this.listarProductos();
@@ -607,6 +686,32 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
     private void cmbCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbCategoriaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cmbCategoriaActionPerformed
+
+    private void tablaProductosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaProductosMousePressed
+        int fila = this.tablaProductos.getSelectedRow();
+        if (fila < 0 || modeloTabla.getRowCount() == 0) {
+            return;
+        }
+
+        try {
+            this.idSeleccionado = (int) this.modeloTabla.getValueAt(fila, 0);
+
+            ItemVendible itemSeleccionado = this.PRODUCTO_NEGOCIO.buscarPorId(this.idSeleccionado);
+
+            if (itemSeleccionado != null) {
+                this.cargarItemEnFormulario(itemSeleccionado);
+
+                this.gestionarEstadoFormulario("SELECCIONADO");
+            } else {
+                JOptionPane.showMessageDialog(this, "No se pudo encontrar el producto seleccionado.", "Error de Carga", JOptionPane.ERROR_MESSAGE);
+                this.gestionarEstadoFormulario("INICIO");
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al seleccionar el producto: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            this.gestionarEstadoFormulario("INICIO");
+        }
+    }//GEN-LAST:event_tablaProductosMousePressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
