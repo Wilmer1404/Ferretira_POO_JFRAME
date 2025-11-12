@@ -74,7 +74,7 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
                 btnEditar.setEnabled(false);
                 btnDesactivar.setEnabled(false);
                 btnCancelar.setEnabled(false);
-                limpiarFormulario(); // Llama a limpiar (sin argumento)
+                limpiarFormulario(); 
                 break;
 
             case "NUEVO":
@@ -85,9 +85,9 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
                 btnEditar.setEnabled(false);
                 btnDesactivar.setEnabled(false);
                 btnCancelar.setEnabled(true);
-                limpiarFormulario(); // Llama a limpiar
-                bloquearControles(false); // Desbloquea
-                txtPassword.setEnabled(true); // Habilita la contraseña para el nuevo
+                limpiarFormulario(); 
+                bloquearControles(false); 
+                txtPassword.setEnabled(true); 
                 break;
 
             case "EDITAR":
@@ -98,8 +98,8 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
                 btnEditar.setEnabled(false);
                 btnDesactivar.setEnabled(false);
                 btnCancelar.setEnabled(true);
-                bloquearControles(false); // SOLO DESBLOQUEA (NO LIMPIA)
-                txtPassword.setEnabled(false); // Contraseña no se edita aquí
+                bloquearControles(false);
+                txtPassword.setEnabled(false); 
                 break;
 
             case "SELECCIONADO":
@@ -108,7 +108,7 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
                 btnEditar.setEnabled(true);
                 btnDesactivar.setEnabled(true);
                 btnCancelar.setEnabled(false);
-                bloquearControles(true); // SOLO BLOQUEA (NO LIMPIA)
+                bloquearControles(true); 
                 break;
         }
     }
@@ -121,9 +121,6 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
         cmbRol.setEnabled(!bloquear);
         cmbActivo.setEnabled(!bloquear);
 
-        // La contraseña solo se habilita en MODO NUEVO,
-        // o si se decide implementar un botón "Resetear Contraseña".
-        // Por ahora, la mantenemos deshabilitada excepto en NUEVO.
         if (this.accion.equals("guardar")) {
             txtPassword.setEnabled(!bloquear);
         } else {
@@ -140,7 +137,6 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
         cmbRol.setSelectedIndex(0);
         cmbActivo.setSelectedIndex(0);
 
-        // Al limpiar, siempre bloqueamos
         bloquearControles(true);
     }
 
@@ -446,7 +442,6 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
             return;
         }
 
-        // Ya no es necesario re-poblar los campos, ya lo hizo el mousePressed.
         this.gestionarEstadoFormulario("EDITAR");
         txtDni.requestFocus();
     }//GEN-LAST:event_btnEditarActionPerformed
@@ -500,16 +495,14 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
         try {
             this.idSeleccionado = (int) this.modeloTabla.getValueAt(fila, 0);
 
-            // 1. Cargar los datos de la tabla a los campos
             txtDni.setText((String) modeloTabla.getValueAt(fila, 1));
             txtNombre.setText((String) modeloTabla.getValueAt(fila, 2));
             txtApellidos.setText((String) modeloTabla.getValueAt(fila, 3));
             txtEmail.setText((String) modeloTabla.getValueAt(fila, 4));
             cmbRol.setSelectedItem((String) modeloTabla.getValueAt(fila, 5));
             cmbActivo.setSelectedItem((String) modeloTabla.getValueAt(fila, 6));
-            txtPassword.setText(""); // Limpiar campo de contraseña por seguridad
+            txtPassword.setText(""); 
 
-            // 2. Llamar al estado "SELECCIONADO" (que ahora solo bloquea)
             this.gestionarEstadoFormulario("SELECCIONADO");
 
         } catch (Exception e) {

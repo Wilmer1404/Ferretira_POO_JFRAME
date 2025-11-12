@@ -146,7 +146,7 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
             btnEditar.setEnabled(false);
             btnDesactivar.setEnabled(false);
             btnCancelar.setEnabled(false);
-            limpiarFormulario(); // CORRECTO: Llama a limpiar (sin argumentos)
+            limpiarFormulario(); 
             break;
             
         case "NUEVO":
@@ -157,8 +157,8 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
             btnEditar.setEnabled(false);
             btnDesactivar.setEnabled(false);
             btnCancelar.setEnabled(true);
-            limpiarFormulario(); // CORRECTO: Llama a limpiar (sin argumentos)
-            bloquearControles(false); // Desbloquea para el nuevo ingreso
+            limpiarFormulario(); 
+            bloquearControles(false); 
             gestionarCamposPolimorficos();
             txtNombre.requestFocus();
             break;
@@ -171,7 +171,7 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
             btnEditar.setEnabled(false);
             btnDesactivar.setEnabled(false);
             btnCancelar.setEnabled(true);
-            bloquearControles(false); // CORRECTO: Solo desbloquea, NO limpia
+            bloquearControles(false); 
             gestionarCamposPolimorficos();
             txtNombre.requestFocus();
             break;
@@ -182,7 +182,7 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
             btnEditar.setEnabled(true);
             btnDesactivar.setEnabled(true);
             btnCancelar.setEnabled(false);
-            bloquearControles(true); // CORRECTO: Solo bloquea, NO limpia
+            bloquearControles(true); 
             break;
     }
 }
@@ -194,10 +194,9 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
         spinPrecio.setValue(0.0);
         spinStock.setValue(0.0);
         txtUnidadMedida.setText("");
-        cmbTipoProducto.setSelectedIndex(0); // O -1 si prefiere
+        cmbTipoProducto.setSelectedIndex(0); 
         cmbCategoria.setSelectedIndex(-1);
 
-        // Al limpiar, siempre bloqueamos
         bloquearControles(true);
     }
 
@@ -235,8 +234,7 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
 
     private void cargarItemEnFormulario(ItemVendible item) {
     if (item == null) {
-        // limpiarFormulario(true); // ESTA ERA SU LÍNEA INCORRECTA
-        limpiarFormulario(); // ESTA ES LA CORRECCIÓN
+        limpiarFormulario(); 
         return;
     }
 
@@ -244,7 +242,6 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
     txtSku.setText(item.getSku());
     txtDescripcion.setText(item.getDescripcion());
 
-    // Esto ahora funcionará gracias a los métodos equals/hashCode
     cmbCategoria.setSelectedItem(item.getCategoria());
 
     if (item instanceof ProductoUnitario) {
@@ -264,10 +261,9 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
         Servicio s = (Servicio) item;
         cmbTipoProducto.setSelectedItem("SERVICIO");
         spinPrecio.setValue(s.getTarifaServicio());
-        spinStock.setValue(0.0); // Los servicios no tienen stock editable
+        spinStock.setValue(0.0); 
     }
 
-    // Actualiza los labels y estados de los spinners
     gestionarCamposPolimorficos();
 }
 
@@ -278,13 +274,11 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
         cmbTipoProducto.setEnabled(!bloquear);
         cmbCategoria.setEnabled(!bloquear);
 
-        // Gestionar spinners basado en el tipo de producto
         if (bloquear) {
             spinPrecio.setEnabled(false);
             spinStock.setEnabled(false);
             txtUnidadMedida.setEnabled(false);
         } else {
-            // Si se desbloquea, respetar la lógica polimórfica
             gestionarCamposPolimorficos();
         }
     }
