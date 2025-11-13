@@ -74,7 +74,7 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
                 btnEditar.setEnabled(false);
                 btnDesactivar.setEnabled(false);
                 btnCancelar.setEnabled(false);
-                limpiarFormulario(); 
+                limpiarFormulario();
                 break;
 
             case "NUEVO":
@@ -85,9 +85,9 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
                 btnEditar.setEnabled(false);
                 btnDesactivar.setEnabled(false);
                 btnCancelar.setEnabled(true);
-                limpiarFormulario(); 
-                bloquearControles(false); 
-                txtPassword.setEnabled(true); 
+                limpiarFormulario();
+                bloquearControles(false);
+                txtPassword.setEnabled(true);
                 break;
 
             case "EDITAR":
@@ -99,7 +99,7 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
                 btnDesactivar.setEnabled(false);
                 btnCancelar.setEnabled(true);
                 bloquearControles(false);
-                txtPassword.setEnabled(false); 
+                txtPassword.setEnabled(false);
                 break;
 
             case "SELECCIONADO":
@@ -108,7 +108,7 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
                 btnEditar.setEnabled(true);
                 btnDesactivar.setEnabled(true);
                 btnCancelar.setEnabled(false);
-                bloquearControles(true); 
+                bloquearControles(true);
                 break;
         }
     }
@@ -403,7 +403,10 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
             txtEmail.requestFocus();
             return;
         }
-        if (this.accion.equals("guardar") && new String(txtPassword.getPassword()).trim().isEmpty()) {
+
+        String passwordPlano = new String(txtPassword.getPassword());
+
+        if (this.accion.equals("guardar") && passwordPlano.trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "El campo Contraseña es obligatorio.", "Validación", JOptionPane.WARNING_MESSAGE);
             txtPassword.requestFocus();
             return;
@@ -420,8 +423,9 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
         String respuesta = null;
 
         if (this.accion.equals("guardar")) {
-            emp.setPasswordHash(new String(txtPassword.getPassword()));
-            respuesta = this.EMPLEADO_NEGOCIO.insertar(emp);
+
+            respuesta = this.EMPLEADO_NEGOCIO.insertar(emp, passwordPlano);
+
         } else {
             emp.setEmpleadoId(this.idSeleccionado);
             respuesta = this.EMPLEADO_NEGOCIO.actualizar(emp);
@@ -501,7 +505,7 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
             txtEmail.setText((String) modeloTabla.getValueAt(fila, 4));
             cmbRol.setSelectedItem((String) modeloTabla.getValueAt(fila, 5));
             cmbActivo.setSelectedItem((String) modeloTabla.getValueAt(fila, 6));
-            txtPassword.setText(""); 
+            txtPassword.setText("");
 
             this.gestionarEstadoFormulario("SELECCIONADO");
 

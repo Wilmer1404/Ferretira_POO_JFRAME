@@ -186,8 +186,8 @@ public class FrmRegistroCliente extends javax.swing.JFrame {
         String apellidos = txtApellidos.getText().trim();
         String email = txtEmail.getText().trim();
         String telefono = txtTelefono.getText().trim();
-        String direccion = txtDireccion.getText().trim(); 
-        String pass1 = new String(txtPassword.getPassword());
+        String direccion = txtDireccion.getText().trim();
+        String pass1 = new String(txtPassword.getPassword()); 
         String pass2 = new String(txtPasswordConfirmar.getPassword());
 
         if (dni.isEmpty() || nombre.isEmpty() || apellidos.isEmpty() || email.isEmpty() || pass1.isEmpty()) {
@@ -207,14 +207,14 @@ public class FrmRegistroCliente extends javax.swing.JFrame {
         cliente.setApellidos(apellidos);
         cliente.setEmail(email);
         cliente.setTelefono(telefono);
-        cliente.setDireccion(direccion); 
-        cliente.setPasswordHash(pass1); 
+        cliente.setDireccion(direccion);
 
-        String respuesta = this.CLIENTE_NEGOCIO.registrar(cliente);
+
+        String respuesta = this.CLIENTE_NEGOCIO.registrar(cliente, pass1);
 
         if (respuesta == null) {
             JOptionPane.showMessageDialog(this, "¡Registro exitoso! Ahora puede iniciar sesión.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            
+
             this.dispose();
             FrmLogin loginForm = new FrmLogin();
             loginForm.setVisible(true);
@@ -225,7 +225,7 @@ public class FrmRegistroCliente extends javax.swing.JFrame {
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         this.dispose();
-        
+
         FrmLogin loginForm = new FrmLogin();
         loginForm.setVisible(true);
     }//GEN-LAST:event_btnCancelarActionPerformed

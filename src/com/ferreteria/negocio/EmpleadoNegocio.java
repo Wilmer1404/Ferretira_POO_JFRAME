@@ -1,5 +1,6 @@
 package com.ferreteria.negocio;
 
+import org.mindrot.jbcrypt.BCrypt;
 import com.ferreteria.datos.impl.EmpleadoDAOImpl;
 import com.ferreteria.datos.interfaces.IEmpleadoDAO;
 import com.ferreteria.entidades.Empleado;
@@ -24,7 +25,7 @@ public class EmpleadoNegocio {
         if (empleadoOpt.isPresent()) {
             Empleado empleado = empleadoOpt.get();
 
-            if (empleado.getPasswordHash().equals(password) && empleado.isActivo()) {
+            if (BCrypt.checkpw(password, empleado.getPasswordHash()) && empleado.isActivo()) {
                 return Optional.of(empleado);
             }
         }
@@ -36,7 +37,7 @@ public class EmpleadoNegocio {
         return this.DATOS_EMP.listarTodos();
     }
 
-    private String validar(Empleado emp) {
+    private String validar(Empleado emp, String passwordPlano) {
         if (emp.getDni() == null || emp.getDni().trim().isEmpty()) {
             return "El DNI es obligatorio.";
         }
@@ -46,7 +47,7 @@ public class EmpleadoNegocio {
         if (emp.getEmail() == null || emp.getEmail().trim().isEmpty()) {
             return "El Email es obligatorio.";
         }
-        if (emp.getPasswordHash() == null || emp.getPasswordHash().trim().isEmpty()) {
+        if (passwordPlano == null || passwordPlano.trim().isEmpty()) {
             return "La contraseña es obligatoria.";
         }
         if (emp.getRol() == null || (!emp.getRol().equals("ADMIN") && !emp.getRol().equals("VENDEDOR"))) {
@@ -55,8 +56,8 @@ public class EmpleadoNegocio {
         return null;
     }
 
-    public String insertar(Empleado emp) {
-        String error = validar(emp);
+    public String insertar(Empleado emp, String passwordPlano) {
+        String error = validar(emp, passwordPlano);
         if (error != null) {
             return error;
         }
@@ -64,6 +65,9 @@ public class EmpleadoNegocio {
         if (this.DATOS_EMP.buscarPorEmail(emp.getEmail()).isPresent()) {
             return "El email ya se encuentra registrado.";
         }
+
+        String hashGenerado = BCrypt.hashpw(passwordPlano, BCrypt.gensalt());
+        emp.setPasswordHash(hashGenerado);
 
         if (this.DATOS_EMP.insertar(emp)) {
             return null;
