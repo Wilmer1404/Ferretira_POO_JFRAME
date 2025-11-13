@@ -8,6 +8,7 @@ import com.ferreteria.entidades.ProductoAGranel;
 import com.ferreteria.entidades.ProductoUnitario;
 import com.ferreteria.entidades.Venta;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +35,13 @@ public class VentaNegocio {
     public Optional<Venta> buscarPorId(int id) {
         Venta venta = this.DATOS_VENTA.buscarPorId(id);
         return Optional.ofNullable(venta);
+    }
+    
+    public List<Venta> listarPorCliente(int clienteId) {
+        if (clienteId <= 0) {
+            return new ArrayList<>(); 
+        }
+        return this.DATOS_VENTA.listarPorCliente(clienteId);
     }
 
     public String insertar(Venta venta) {

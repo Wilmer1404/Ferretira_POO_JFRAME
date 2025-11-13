@@ -13,7 +13,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.table.DefaultTableModel;
 
-
 public class FrmGestionProductos extends javax.swing.JInternalFrame {
 
     private final ProductoNegocio PRODUCTO_NEGOCIO;
@@ -32,7 +31,7 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
         this.CATEGORIA_NEGOCIO = new CategoriaNegocio();
 
         this.definirCabecerasTabla();
-        this.listarProductos();
+        this.listarProductos("");
 
         this.cargarComboTipoProducto();
         this.cargarComboCategorias();
@@ -138,54 +137,54 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
     }
 
     private void gestionarEstadoFormulario(String estado) {
-    switch (estado) {
-        case "INICIO":
-            this.accion = "guardar";
-            btnNuevo.setEnabled(true);
-            btnGuardar.setEnabled(false);
-            btnEditar.setEnabled(false);
-            btnDesactivar.setEnabled(false);
-            btnCancelar.setEnabled(false);
-            limpiarFormulario(); 
-            break;
-            
-        case "NUEVO":
-            this.accion = "guardar";
-            btnNuevo.setEnabled(false);
-            btnGuardar.setEnabled(true);
-            btnGuardar.setText("Guardar");
-            btnEditar.setEnabled(false);
-            btnDesactivar.setEnabled(false);
-            btnCancelar.setEnabled(true);
-            limpiarFormulario(); 
-            bloquearControles(false); 
-            gestionarCamposPolimorficos();
-            txtNombre.requestFocus();
-            break;
-            
-        case "EDITAR":
-            this.accion = "editar";
-            btnNuevo.setEnabled(false);
-            btnGuardar.setEnabled(true);
-            btnGuardar.setText("Actualizar");
-            btnEditar.setEnabled(false);
-            btnDesactivar.setEnabled(false);
-            btnCancelar.setEnabled(true);
-            bloquearControles(false); 
-            gestionarCamposPolimorficos();
-            txtNombre.requestFocus();
-            break;
-            
-        case "SELECCIONADO":
-            btnNuevo.setEnabled(true);
-            btnGuardar.setEnabled(false);
-            btnEditar.setEnabled(true);
-            btnDesactivar.setEnabled(true);
-            btnCancelar.setEnabled(false);
-            bloquearControles(true); 
-            break;
+        switch (estado) {
+            case "INICIO":
+                this.accion = "guardar";
+                btnNuevo.setEnabled(true);
+                btnGuardar.setEnabled(false);
+                btnEditar.setEnabled(false);
+                btnDesactivar.setEnabled(false);
+                btnCancelar.setEnabled(false);
+                limpiarFormulario();
+                break;
+
+            case "NUEVO":
+                this.accion = "guardar";
+                btnNuevo.setEnabled(false);
+                btnGuardar.setEnabled(true);
+                btnGuardar.setText("Guardar");
+                btnEditar.setEnabled(false);
+                btnDesactivar.setEnabled(false);
+                btnCancelar.setEnabled(true);
+                limpiarFormulario();
+                bloquearControles(false);
+                gestionarCamposPolimorficos();
+                txtNombre.requestFocus();
+                break;
+
+            case "EDITAR":
+                this.accion = "editar";
+                btnNuevo.setEnabled(false);
+                btnGuardar.setEnabled(true);
+                btnGuardar.setText("Actualizar");
+                btnEditar.setEnabled(false);
+                btnDesactivar.setEnabled(false);
+                btnCancelar.setEnabled(true);
+                bloquearControles(false);
+                gestionarCamposPolimorficos();
+                txtNombre.requestFocus();
+                break;
+
+            case "SELECCIONADO":
+                btnNuevo.setEnabled(true);
+                btnGuardar.setEnabled(false);
+                btnEditar.setEnabled(true);
+                btnDesactivar.setEnabled(true);
+                btnCancelar.setEnabled(false);
+                bloquearControles(true);
+                break;
+        }
     }
-}
 
     private void limpiarFormulario() {
         txtNombre.setText("");
@@ -194,35 +193,26 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
         spinPrecio.setValue(0.0);
         spinStock.setValue(0.0);
         txtUnidadMedida.setText("");
-        cmbTipoProducto.setSelectedIndex(0); 
+        cmbTipoProducto.setSelectedIndex(0);
         cmbCategoria.setSelectedIndex(-1);
 
         bloquearControles(true);
     }
 
-    private void listarProductos() {
+    private void listarProductos(String terminoBusqueda) {
         try {
-            modeloTabla.setRowCount(0);
-            List<ItemVendible> lista = this.PRODUCTO_NEGOCIO.listar();
-
-            if (lista.isEmpty()) {
-                return;
+            List<ItemVendible> lista;
+            if (terminoBusqueda == null || terminoBusqueda.isEmpty()) {
+                lista = this.PRODUCTO_NEGOCIO.listar();
+            } else {
+                lista = this.PRODUCTO_NEGOCIO.buscar(terminoBusqueda);
             }
 
-            for (ItemVendible item : lista) {
-                Object[] fila = new Object[8];
-                fila[0] = item.getProductoId();
-                fila[1] = item.getSku();
-                fila[2] = item.getNombre();
-
-                fila[3] = (item.getCategoria() != null) ? item.getCategoria().getNombre() : "S/C";
-
-                fila[4] = item.getClass().getSimpleName();
-                fila[5] = item.calcularSubtotal(1);
-                fila[6] = (item instanceof Servicio) ? "Infinito" : item.obtenerStock();
-                fila[7] = item.obtenerUnidadParaGUI();
-
-                modeloTabla.addRow(fila);
+            if (lista.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No se encontraron resultados.", "Búsqueda", JOptionPane.INFORMATION_MESSAGE);
+                modeloTabla.setRowCount(0); 
+            } else {
+                cargarTabla(lista);
             }
 
         } catch (Exception ex) {
@@ -232,40 +222,56 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
         }
     }
 
+    private void cargarTabla(List<ItemVendible> lista) {
+        modeloTabla.setRowCount(0);
+        for (ItemVendible item : lista) {
+            Object[] fila = new Object[8];
+            fila[0] = item.getProductoId();
+            fila[1] = item.getSku();
+            fila[2] = item.getNombre();
+            fila[3] = (item.getCategoria() != null) ? item.getCategoria().getNombre() : "S/C";
+            fila[4] = item.getClass().getSimpleName();
+            fila[5] = item.calcularSubtotal(1);
+            fila[6] = (item instanceof Servicio) ? "Infinito" : item.obtenerStock();
+            fila[7] = item.obtenerUnidadParaGUI();
+            modeloTabla.addRow(fila);
+        }
+    }
+
     private void cargarItemEnFormulario(ItemVendible item) {
-    if (item == null) {
-        limpiarFormulario(); 
-        return;
+        if (item == null) {
+            limpiarFormulario();
+            return;
+        }
+
+        txtNombre.setText(item.getNombre());
+        txtSku.setText(item.getSku());
+        txtDescripcion.setText(item.getDescripcion());
+
+        cmbCategoria.setSelectedItem(item.getCategoria());
+
+        if (item instanceof ProductoUnitario) {
+            ProductoUnitario pu = (ProductoUnitario) item;
+            cmbTipoProducto.setSelectedItem("UNITARIO");
+            spinPrecio.setValue(pu.getPrecioUnitario());
+            spinStock.setValue(pu.getStockActual());
+
+        } else if (item instanceof ProductoAGranel) {
+            ProductoAGranel pg = (ProductoAGranel) item;
+            cmbTipoProducto.setSelectedItem("GRANEL");
+            spinPrecio.setValue(pg.getPrecioPorMedida());
+            spinStock.setValue(pg.getStockMedido());
+            txtUnidadMedida.setText(pg.getUnidadMedida());
+
+        } else if (item instanceof Servicio) {
+            Servicio s = (Servicio) item;
+            cmbTipoProducto.setSelectedItem("SERVICIO");
+            spinPrecio.setValue(s.getTarifaServicio());
+            spinStock.setValue(0.0);
+        }
+
+        gestionarCamposPolimorficos();
     }
-
-    txtNombre.setText(item.getNombre());
-    txtSku.setText(item.getSku());
-    txtDescripcion.setText(item.getDescripcion());
-
-    cmbCategoria.setSelectedItem(item.getCategoria());
-
-    if (item instanceof ProductoUnitario) {
-        ProductoUnitario pu = (ProductoUnitario) item;
-        cmbTipoProducto.setSelectedItem("UNITARIO");
-        spinPrecio.setValue(pu.getPrecioUnitario());
-        spinStock.setValue(pu.getStockActual());
-
-    } else if (item instanceof ProductoAGranel) {
-        ProductoAGranel pg = (ProductoAGranel) item;
-        cmbTipoProducto.setSelectedItem("GRANEL");
-        spinPrecio.setValue(pg.getPrecioPorMedida());
-        spinStock.setValue(pg.getStockMedido());
-        txtUnidadMedida.setText(pg.getUnidadMedida());
-
-    } else if (item instanceof Servicio) {
-        Servicio s = (Servicio) item;
-        cmbTipoProducto.setSelectedItem("SERVICIO");
-        spinPrecio.setValue(s.getTarifaServicio());
-        spinStock.setValue(0.0); 
-    }
-
-    gestionarCamposPolimorficos();
-}
 
     private void bloquearControles(boolean bloquear) {
         txtNombre.setEnabled(!bloquear);
@@ -312,6 +318,8 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
         btnEditar = new javax.swing.JButton();
         btnDesactivar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
+        txtBuscar = new javax.swing.JTextField();
+        btnBuscar = new javax.swing.JButton();
         scrollTabla = new javax.swing.JScrollPane();
         tablaProductos = new javax.swing.JTable();
 
@@ -476,21 +484,34 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
             }
         });
 
+        btnBuscar.setText("Buscar");
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelAccionesLayout = new javax.swing.GroupLayout(panelAcciones);
         panelAcciones.setLayout(panelAccionesLayout);
         panelAccionesLayout.setHorizontalGroup(
             panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelAccionesLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnNuevo)
-                .addGap(18, 18, 18)
-                .addComponent(btnGuardar)
-                .addGap(18, 18, 18)
-                .addComponent(btnEditar)
-                .addGap(18, 18, 18)
-                .addComponent(btnDesactivar)
-                .addGap(18, 18, 18)
-                .addComponent(btnCancelar)
+                .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(panelAccionesLayout.createSequentialGroup()
+                        .addComponent(btnNuevo)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnGuardar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnEditar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnDesactivar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnCancelar))
+                    .addGroup(panelAccionesLayout.createSequentialGroup()
+                        .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnBuscar)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelAccionesLayout.setVerticalGroup(
@@ -503,7 +524,11 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
                     .addComponent(btnEditar)
                     .addComponent(btnDesactivar)
                     .addComponent(btnCancelar))
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBuscar))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         tablaProductos.setModel(new javax.swing.table.DefaultTableModel(
@@ -542,7 +567,7 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelAcciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollTabla, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE))
+                .addComponent(scrollTabla, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE))
         );
 
         pack();
@@ -624,7 +649,8 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
 
         if (respuesta == null) {
             JOptionPane.showMessageDialog(this, "Producto guardado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            this.listarProductos();
+            this.listarProductos("")
+                    ;
             this.gestionarEstadoFormulario("INICIO");
         } else {
             JOptionPane.showMessageDialog(this, respuesta, "Error de Negocio", JOptionPane.ERROR_MESSAGE);
@@ -662,7 +688,7 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
 
         if (respuesta == null) {
             JOptionPane.showMessageDialog(this, "Producto desactivado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            this.listarProductos();
+            this.listarProductos("");
             this.gestionarEstadoFormulario("INICIO");
         } else {
             JOptionPane.showMessageDialog(this, respuesta, "Error de Negocio", JOptionPane.ERROR_MESSAGE);
@@ -671,6 +697,8 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         this.gestionarEstadoFormulario("INICIO");
+        this.txtBuscar.setText("");
+        this.listarProductos("");
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void cmbTipoProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbTipoProductoActionPerformed
@@ -707,8 +735,13 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_tablaProductosMousePressed
 
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        this.listarProductos(txtBuscar.getText().trim());
+    }//GEN-LAST:event_btnBuscarActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnDesactivar;
     private javax.swing.JButton btnEditar;
@@ -732,6 +765,7 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
     private javax.swing.JSpinner spinPrecio;
     private javax.swing.JSpinner spinStock;
     private javax.swing.JTable tablaProductos;
+    private javax.swing.JTextField txtBuscar;
     private javax.swing.JTextArea txtDescripcion;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtSku;

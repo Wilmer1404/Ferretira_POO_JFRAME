@@ -8,12 +8,17 @@ import java.util.List;
 import java.util.Optional;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import com.ferreteria.negocio.ClienteNegocio;
+import com.ferreteria.entidades.Cliente;
+import java.util.ArrayList;
 
 public class FrmReporteVentas extends javax.swing.JInternalFrame {
 
     private final VentaNegocio VENTA_NEGOCIO;
+    private final ClienteNegocio CLIENTE_NEGOCIO;
     private DefaultTableModel modeloTabla;
     private int idSeleccionado;
+    private List<Venta> listaActual;
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
@@ -21,6 +26,8 @@ public class FrmReporteVentas extends javax.swing.JInternalFrame {
         initComponents();
 
         this.VENTA_NEGOCIO = new VentaNegocio();
+        this.CLIENTE_NEGOCIO = new ClienteNegocio();
+        this.listaActual = new ArrayList<>();
         this.definirCabecerasTabla();
         this.listarVentas();
         btnVerDetalle.setEnabled(false);
@@ -51,25 +58,8 @@ public class FrmReporteVentas extends javax.swing.JInternalFrame {
 
     private void listarVentas() {
         try {
-            modeloTabla.setRowCount(0);
-            List<Venta> lista = this.VENTA_NEGOCIO.listar();
-
-            if (lista.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "No se encontraron ventas registradas.", "Información", JOptionPane.INFORMATION_MESSAGE);
-                return;
-            }
-
-            for (Venta venta : lista) {
-                Object[] fila = new Object[6];
-                fila[0] = venta.getVentaId();
-                fila[1] = venta.getFechaVenta().format(formatter);
-                fila[2] = venta.getCliente().getNombre() + " " + venta.getCliente().getApellidos();
-                fila[3] = venta.getEmpleado().getNombre(); 
-                fila[4] = venta.getMetodoPago();
-                fila[5] = venta.getTotal();
-
-                modeloTabla.addRow(fila);
-            }
+            this.listaActual = this.VENTA_NEGOCIO.listar();
+            this.cargarTabla(this.listaActual);
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
@@ -78,15 +68,62 @@ public class FrmReporteVentas extends javax.swing.JInternalFrame {
         }
     }
 
+    private void cargarTabla(List<Venta> lista) {
+        modeloTabla.setRowCount(0);
+        btnVerDetalle.setEnabled(false);
+        this.idSeleccionado = 0;
+
+        if (lista.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No se encontraron ventas para el criterio seleccionado.", "Información", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        for (Venta venta : lista) {
+            Object[] fila = new Object[6];
+            fila[0] = venta.getVentaId();
+            fila[1] = venta.getFechaVenta().format(formatter);
+            fila[2] = venta.getCliente().getNombre() + " " + venta.getCliente().getApellidos();
+            fila[3] = venta.getEmpleado().getNombre();
+            fila[4] = venta.getMetodoPago();
+            fila[5] = venta.getTotal();
+
+            modeloTabla.addRow(fila);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        scrollTabla = new javax.swing.JScrollPane();
+        tablaVentas = new javax.swing.JTable();
         panelControles = new javax.swing.JPanel();
         btnRefrescar = new javax.swing.JButton();
         btnVerDetalle = new javax.swing.JButton();
-        scrollTabla = new javax.swing.JScrollPane();
-        tablaVentas = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+        txtBuscarDni = new javax.swing.JTextField();
+        btnBuscarCliente = new javax.swing.JButton();
+
+        tablaVentas.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        tablaVentas.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        tablaVentas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tablaVentasMousePressed(evt);
+            }
+        });
+        scrollTabla.setViewportView(tablaVentas);
+
+        getContentPane().add(scrollTabla, java.awt.BorderLayout.PAGE_START);
 
         panelControles.setBorder(javax.swing.BorderFactory.createTitledBorder("Opciones del Reporte"));
 
@@ -104,16 +141,32 @@ public class FrmReporteVentas extends javax.swing.JInternalFrame {
             }
         });
 
+        jLabel1.setText("Buscar por DNI:");
+
+        btnBuscarCliente.setText("Buscar Cliente");
+        btnBuscarCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarClienteActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelControlesLayout = new javax.swing.GroupLayout(panelControles);
         panelControles.setLayout(panelControlesLayout);
         panelControlesLayout.setHorizontalGroup(
             panelControlesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelControlesLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnRefrescar)
-                .addGap(18, 18, 18)
-                .addComponent(btnVerDetalle)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(panelControlesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelControlesLayout.createSequentialGroup()
+                        .addComponent(btnRefrescar)
+                        .addGap(65, 65, 65)
+                        .addComponent(jLabel1))
+                    .addComponent(btnVerDetalle))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelControlesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnBuscarCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)
+                    .addComponent(txtBuscarDni, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE))
+                .addContainerGap(110, Short.MAX_VALUE))
         );
         panelControlesLayout.setVerticalGroup(
             panelControlesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -121,31 +174,22 @@ public class FrmReporteVentas extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(panelControlesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnRefrescar)
-                    .addComponent(btnVerDetalle))
-                .addContainerGap(19, Short.MAX_VALUE))
+                    .addComponent(jLabel1)
+                    .addComponent(txtBuscarDni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelControlesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnVerDetalle)
+                    .addComponent(btnBuscarCliente))
+                .addContainerGap(9, Short.MAX_VALUE))
         );
 
         getContentPane().add(panelControles, java.awt.BorderLayout.CENTER);
-
-        tablaVentas.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        scrollTabla.setViewportView(tablaVentas);
-
-        getContentPane().add(scrollTabla, java.awt.BorderLayout.PAGE_START);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnRefrescarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefrescarActionPerformed
+        this.txtBuscarDni.setText("");
         this.listarVentas();
     }//GEN-LAST:event_btnRefrescarActionPerformed
 
@@ -183,32 +227,51 @@ public class FrmReporteVentas extends javax.swing.JInternalFrame {
 
     }//GEN-LAST:event_btnVerDetalleActionPerformed
 
-    private void tablaVentasMousePressed(java.awt.event.MouseEvent evt) {                                         
-        if (modeloTabla.getRowCount() == 0) {
+    private void btnBuscarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarClienteActionPerformed
+        String dni = txtBuscarDni.getText().trim();
+        if (dni.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar un DNI para buscar.", "Validación", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
+        Optional<Cliente> optCliente = this.CLIENTE_NEGOCIO.buscarPorDni(dni);
+
+        if (!optCliente.isPresent()) {
+            JOptionPane.showMessageDialog(this, "No se encontró ningún cliente con el DNI: " + dni, "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        Cliente cliente = optCliente.get();
+        this.listaActual = this.VENTA_NEGOCIO.listarPorCliente(cliente.getClienteId());
+
+        this.cargarTabla(this.listaActual);
+    }//GEN-LAST:event_btnBuscarClienteActionPerformed
+
+    private void tablaVentasMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaVentasMousePressed
+        if (modeloTabla.getRowCount() == 0) {
+            return;
+        }
         int fila = this.tablaVentas.getSelectedRow();
         if (fila < 0) {
             return;
         }
-
         try {
             this.idSeleccionado = (int) this.modeloTabla.getValueAt(fila, 0);
-
             btnVerDetalle.setEnabled(true);
-
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error al seleccionar: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }                                             
+    }//GEN-LAST:event_tablaVentasMousePressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBuscarCliente;
     private javax.swing.JButton btnRefrescar;
     private javax.swing.JButton btnVerDetalle;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel panelControles;
     private javax.swing.JScrollPane scrollTabla;
     private javax.swing.JTable tablaVentas;
+    private javax.swing.JTextField txtBuscarDni;
     // End of variables declaration//GEN-END:variables
 }

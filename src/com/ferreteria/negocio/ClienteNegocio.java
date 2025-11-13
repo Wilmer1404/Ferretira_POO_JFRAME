@@ -34,6 +34,12 @@ public class ClienteNegocio {
         return Optional.empty();
     }
 
+    public Optional<Cliente> buscarPorDni(String dni) {
+        if (dni == null || dni.trim().isEmpty()) {
+            return Optional.empty();
+        }
+        return this.DATOS_CLI.buscarPorDni(dni.trim());
+    }
 
     public String registrar(Cliente cliente, String passwordPlano) {
         if (cliente.getDni() == null || cliente.getDni().length() < 8) {

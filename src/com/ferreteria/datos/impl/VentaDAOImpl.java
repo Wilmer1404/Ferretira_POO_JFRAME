@@ -6,7 +6,7 @@ import com.ferreteria.entidades.Cliente;
 import com.ferreteria.entidades.DetalleVenta;
 import com.ferreteria.entidades.Empleado;
 import com.ferreteria.entidades.ItemVendible;
-import com.ferreteria.entidades.ProductoUnitario; 
+import com.ferreteria.entidades.ProductoUnitario;
 import com.ferreteria.entidades.Venta;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -157,7 +157,26 @@ public class VentaDAOImpl implements IVentaDAO {
     @Override
     public List<Venta> listarPorCliente(int clienteId) {
         List<Venta> lista = new ArrayList<>();
-        LOGGER.log(Level.INFO, "listarPorCliente no implementado.");
+        String sql = "SELECT v.venta_id, v.fecha_venta, v.total, v.metodo_pago, "
+                + "c.nombre as cliente_nombre, c.apellidos as cliente_apellidos, "
+                + "e.nombre as empleado_nombre "
+                + "FROM Venta v "
+                + "JOIN Cliente c ON v.cliente_id = c.cliente_id "
+                + "LEFT JOIN Empleado e ON v.empleado_id = e.empleado_id "
+                + "WHERE v.cliente_id = ? " // <-- El filtro
+                + "ORDER BY v.fecha_venta DESC";
+
+        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+            ps.setInt(1, clienteId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(mapearVentaParaReporte(rs));
+                }
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error al listar ventas por cliente", ex);
+        }
         return lista;
     }
 

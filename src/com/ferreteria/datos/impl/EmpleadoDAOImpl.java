@@ -38,13 +38,11 @@ public class EmpleadoDAOImpl implements IEmpleadoDAO {
         return Optional.empty();
     }
 
-
     @Override
     public List<Empleado> listarTodos() {
         List<Empleado> lista = new ArrayList<>();
         String sql = "SELECT * FROM Empleado ORDER BY apellidos, nombre ASC";
-        try (PreparedStatement ps = cnx.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = cnx.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 lista.add(mapearResultSet(rs));
             }
@@ -71,9 +69,33 @@ public class EmpleadoDAOImpl implements IEmpleadoDAO {
     }
 
     @Override
+    public List<Empleado> buscar(String termino) {
+        List<Empleado> lista = new ArrayList<>();
+        String sql = "SELECT * FROM Empleado "
+                + "WHERE (dni = ? OR nombre ILIKE ? OR apellidos ILIKE ?) "
+                + "ORDER BY apellidos, nombre ASC";
+
+        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+            String terminoLike = "%" + termino + "%";
+            ps.setString(1, termino);      
+            ps.setString(2, terminoLike);
+            ps.setString(3, terminoLike);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(mapearResultSet(rs));
+                }
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error al buscar empleados", ex);
+        }
+        return lista;
+    }
+
+    @Override
     public boolean insertar(Empleado entidad) {
-        String sql = "INSERT INTO Empleado (dni, nombre, apellidos, email, password_hash, rol, activo) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Empleado (dni, nombre, apellidos, email, password_hash, rol, activo) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setString(1, entidad.getDni());
             ps.setString(2, entidad.getNombre());
@@ -91,8 +113,8 @@ public class EmpleadoDAOImpl implements IEmpleadoDAO {
 
     @Override
     public boolean actualizar(Empleado entidad) {
-        String sql = "UPDATE Empleado SET dni = ?, nombre = ?, apellidos = ?, email = ?, " +
-                     "rol = ?, activo = ? WHERE empleado_id = ?";
+        String sql = "UPDATE Empleado SET dni = ?, nombre = ?, apellidos = ?, email = ?, "
+                + "rol = ?, activo = ? WHERE empleado_id = ?";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setString(1, entidad.getDni());
             ps.setString(2, entidad.getNombre());

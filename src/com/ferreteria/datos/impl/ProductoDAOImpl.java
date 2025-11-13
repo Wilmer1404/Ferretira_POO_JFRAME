@@ -102,22 +102,24 @@ public class ProductoDAOImpl implements IProductoDAO {
     }
 
     @Override
-    public List<ItemVendible> buscarPorNombre(String nombre) {
+    public List<ItemVendible> buscarPorNombre(String nombre) { 
         List<ItemVendible> lista = new ArrayList<>();
 
-        String sql = "SELECT * FROM Producto WHERE nombre ILIKE ? AND activo = TRUE";
-
+        String sql = "SELECT * FROM Producto WHERE (nombre ILIKE ? OR sku ILIKE ?) AND activo = TRUE";
+        
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
-            ps.setString(1, "%" + nombre + "%");
-
+            String terminoBusqueda = "%" + nombre + "%";
+            ps.setString(1, terminoBusqueda);
+            ps.setString(2, terminoBusqueda);
+            
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     lista.add(fabricarItemDesdeResultSet(rs));
                 }
             }
-
+            
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Error al buscar productos por nombre", ex);
+            LOGGER.log(Level.SEVERE, "Error al buscar productos por nombre o SKU", ex);
         }
         return lista;
     }
@@ -242,10 +244,8 @@ public class ProductoDAOImpl implements IProductoDAO {
                 ps.setDouble(12, s.getTarifaServicio());
             }
 
-            // --- PARÁMETRO FINAL (EL WHERE) ---
             ps.setInt(13, entidad.getProductoId());
 
-            // --- FIN DE LÓGICA FALTANTE ---
             return ps.executeUpdate() > 0;
 
         } catch (SQLException ex) {

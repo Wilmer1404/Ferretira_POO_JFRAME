@@ -36,6 +36,13 @@ public class EmpleadoNegocio {
     public List<Empleado> listar() {
         return this.DATOS_EMP.listarTodos();
     }
+    
+    public List<Empleado> buscar(String termino) {
+        if (termino == null || termino.trim().isEmpty()) {
+            return this.listar();
+        }
+        return this.DATOS_EMP.buscar(termino.trim());
+    }
 
     private String validar(Empleado emp, String passwordPlano) {
         if (emp.getDni() == null || emp.getDni().trim().isEmpty()) {
