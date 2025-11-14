@@ -24,6 +24,7 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
         menuGestion = new javax.swing.JMenu();
         itemGestionProductos = new javax.swing.JMenuItem();
         itemGestionEmpleados = new javax.swing.JMenuItem();
+        itemGestionProveedores = new javax.swing.JMenuItem();
         menuReportes = new javax.swing.JMenu();
         itemReporteVentas = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
@@ -59,6 +60,9 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
             }
         });
         menuGestion.add(itemGestionEmpleados);
+
+        itemGestionProveedores.setText("Gestionar Proveedores\"");
+        menuGestion.add(itemGestionProveedores);
 
         jMenuBar1.add(menuGestion);
 
@@ -175,6 +179,7 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
     private javax.swing.JDesktopPane desktopPrincipal;
     private javax.swing.JMenuItem itemGestionEmpleados;
     private javax.swing.JMenuItem itemGestionProductos;
+    private javax.swing.JMenuItem itemGestionProveedores;
     private javax.swing.JMenuItem itemReporteVentas;
     private javax.swing.JMenuItem itemSalir;
     private javax.swing.JMenu jMenu3;

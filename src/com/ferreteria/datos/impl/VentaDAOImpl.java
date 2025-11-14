@@ -6,7 +6,9 @@ import com.ferreteria.entidades.Cliente;
 import com.ferreteria.entidades.DetalleVenta;
 import com.ferreteria.entidades.Empleado;
 import com.ferreteria.entidades.ItemVendible;
+import com.ferreteria.entidades.ProductoAGranel;
 import com.ferreteria.entidades.ProductoUnitario;
+import com.ferreteria.entidades.Servicio;
 import com.ferreteria.entidades.Venta;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,11 +23,9 @@ import java.util.logging.Logger;
 
 public class VentaDAOImpl implements IVentaDAO {
 
-    private final Connection cnx;
     private static final Logger LOGGER = Logger.getLogger(VentaDAOImpl.class.getName());
 
     public VentaDAOImpl() {
-        this.cnx = Conexion.obtenerConexion();
     }
 
     private Venta mapearVentaParaReporte(ResultSet rs) throws SQLException {
@@ -49,25 +49,31 @@ public class VentaDAOImpl implements IVentaDAO {
     }
 
     @Override
-    public boolean insertar(Venta venta) {
-        String sqlVenta = "INSERT INTO Venta (cliente_id, fecha_venta, total, metodo_pago, referencia_transaccion) "
-                + "VALUES (?, ?, ?, ?, ?)";
+    public int insertar(Venta venta, Connection conn) {
+        String sqlVenta = "INSERT INTO Venta (cliente_id, empleado_id, fecha_venta, total, metodo_pago, referencia_transaccion) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
         String sqlDetalle = "INSERT INTO DetalleVenta (venta_id, producto_id, cantidad, precio_historico, subtotal) "
                 + "VALUES (?, ?, ?, ?, ?)";
-        Connection conn = this.cnx;
+
         try {
-            conn.setAutoCommit(false);
             int ventaIdGenerada;
             try (PreparedStatement psVenta = conn.prepareStatement(sqlVenta, Statement.RETURN_GENERATED_KEYS)) {
                 psVenta.setInt(1, venta.getCliente().getClienteId());
-                psVenta.setTimestamp(2, java.sql.Timestamp.valueOf(venta.getFechaVenta()));
-                psVenta.setDouble(3, venta.getTotal());
-                psVenta.setString(4, venta.getMetodoPago());
-                psVenta.setString(5, venta.getReferenciaTransaccion());
+                if (venta.getEmpleado() != null) {
+                    psVenta.setInt(2, venta.getEmpleado().getEmpleadoId());
+                } else {
+                    psVenta.setNull(2, java.sql.Types.INTEGER);
+                }
+                psVenta.setTimestamp(3, java.sql.Timestamp.valueOf(venta.getFechaVenta()));
+                psVenta.setDouble(4, venta.getTotal());
+                psVenta.setString(5, venta.getMetodoPago());
+                psVenta.setString(6, venta.getReferenciaTransaccion());
+
                 int filasAfectadas = psVenta.executeUpdate();
                 if (filasAfectadas == 0) {
                     throw new SQLException("Falló la creación de la venta, no se insertaron filas.");
                 }
+
                 try (ResultSet generatedKeys = psVenta.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         ventaIdGenerada = generatedKeys.getInt(1);
@@ -76,6 +82,7 @@ public class VentaDAOImpl implements IVentaDAO {
                     }
                 }
             }
+
             try (PreparedStatement psDetalle = conn.prepareStatement(sqlDetalle)) {
                 for (DetalleVenta detalle : venta.getDetalles()) {
                     psDetalle.setInt(1, ventaIdGenerada);
@@ -87,22 +94,29 @@ public class VentaDAOImpl implements IVentaDAO {
                 }
                 psDetalle.executeBatch();
             }
-            conn.commit();
-            return true;
+            return ventaIdGenerada;
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Error en transacción de Venta. Iniciando ROLLBACK.", ex);
+            LOGGER.log(Level.SEVERE, "Error en DAO de Venta. Transacción será revertida.", ex);
+            throw new RuntimeException(ex); 
+        }
+    }
+
+    @Override
+    public boolean insertar(Venta entidad) {
+        try (Connection conn = Conexion.obtenerConexion()) {
+            conn.setAutoCommit(false); 
             try {
+                this.insertar(entidad, conn);
+                conn.commit();
+                return true;
+            } catch (Exception e) {
                 conn.rollback();
-            } catch (SQLException rollbackEx) {
-                LOGGER.log(Level.SEVERE, "Error crítico. Falló el ROLLBACK.", rollbackEx);
+                LOGGER.log(Level.SEVERE, "Error en inserción local de Venta", e);
+                return false;
             }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error al obtener conexión para Venta", e);
             return false;
-        } finally {
-            try {
-                conn.setAutoCommit(true);
-            } catch (SQLException ex) {
-                LOGGER.log(Level.SEVERE, "Error al restaurar AutoCommit.", ex);
-            }
         }
     }
 
@@ -117,7 +131,8 @@ public class VentaDAOImpl implements IVentaDAO {
                 + "LEFT JOIN Empleado e ON v.empleado_id = e.empleado_id "
                 + "ORDER BY v.fecha_venta DESC";
 
-        try (PreparedStatement ps = cnx.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = Conexion.obtenerConexion(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
             while (rs.next()) {
                 lista.add(mapearVentaParaReporte(rs));
             }
@@ -139,7 +154,8 @@ public class VentaDAOImpl implements IVentaDAO {
                 + "WHERE DATE(v.fecha_venta) BETWEEN ? AND ? "
                 + "ORDER BY v.fecha_venta DESC";
 
-        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+        try (Connection conn = Conexion.obtenerConexion(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setObject(1, inicio);
             ps.setObject(2, fin);
 
@@ -163,10 +179,11 @@ public class VentaDAOImpl implements IVentaDAO {
                 + "FROM Venta v "
                 + "JOIN Cliente c ON v.cliente_id = c.cliente_id "
                 + "LEFT JOIN Empleado e ON v.empleado_id = e.empleado_id "
-                + "WHERE v.cliente_id = ? " // <-- El filtro
+                + "WHERE v.cliente_id = ? "
                 + "ORDER BY v.fecha_venta DESC";
 
-        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+        try (Connection conn = Conexion.obtenerConexion(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setInt(1, clienteId);
 
             try (ResultSet rs = ps.executeQuery()) {
@@ -191,40 +208,70 @@ public class VentaDAOImpl implements IVentaDAO {
                 + "LEFT JOIN Empleado e ON v.empleado_id = e.empleado_id "
                 + "WHERE v.venta_id = ?";
 
-        try (PreparedStatement psVenta = cnx.prepareStatement(sqlVenta)) {
-            psVenta.setInt(1, id);
+        try (Connection conn = Conexion.obtenerConexion()) {
 
-            try (ResultSet rsVenta = psVenta.executeQuery()) {
-                if (rsVenta.next()) {
-                    venta = mapearVentaParaReporte(rsVenta);
-
-                    String sqlDetalle = "SELECT d.cantidad, d.precio_historico, d.subtotal, p.producto_id, p.nombre "
-                            + "FROM DetalleVenta d "
-                            + "JOIN Producto p ON d.producto_id = p.producto_id "
-                            + "WHERE d.venta_id = ?";
-
-                    List<DetalleVenta> detalles = new ArrayList<>();
-                    try (PreparedStatement psDetalle = cnx.prepareStatement(sqlDetalle)) {
-                        psDetalle.setInt(1, id);
-                        try (ResultSet rsDetalle = psDetalle.executeQuery()) {
-                            while (rsDetalle.next()) {
-                                DetalleVenta detalle = new DetalleVenta();
-                                detalle.setCantidad(rsDetalle.getDouble("cantidad"));
-                                detalle.setPrecioHistorico(rsDetalle.getDouble("precio_historico"));
-                                detalle.setSubtotal(rsDetalle.getDouble("subtotal"));
-
-                                ItemVendible item = new ProductoUnitario();
-                                item.setProductoId(rsDetalle.getInt("producto_id"));
-                                item.setNombre(rsDetalle.getString("nombre"));
-
-                                detalle.setItem(item);
-                                detalles.add(detalle);
-                            }
-                        }
+            try (PreparedStatement psVenta = conn.prepareStatement(sqlVenta)) {
+                psVenta.setInt(1, id);
+                try (ResultSet rsVenta = psVenta.executeQuery()) {
+                    if (rsVenta.next()) {
+                        venta = mapearVentaParaReporte(rsVenta);
                     }
-                    venta.setDetalles(detalles);
                 }
             }
+
+            if (venta != null) {
+                String sqlDetalle = "SELECT d.cantidad, d.precio_historico, d.subtotal, p.* "
+                        + "FROM DetalleVenta d "
+                        + "JOIN Producto p ON d.producto_id = p.producto_id "
+                        + "WHERE d.venta_id = ?";
+
+                List<DetalleVenta> detalles = new ArrayList<>();
+                try (PreparedStatement psDetalle = conn.prepareStatement(sqlDetalle)) {
+                    psDetalle.setInt(1, id);
+                    try (ResultSet rsDetalle = psDetalle.executeQuery()) {
+                        while (rsDetalle.next()) {
+                            DetalleVenta detalle = new DetalleVenta();
+                            detalle.setCantidad(rsDetalle.getDouble("cantidad"));
+                            detalle.setPrecioHistorico(rsDetalle.getDouble("precio_historico"));
+                            detalle.setSubtotal(rsDetalle.getDouble("subtotal"));
+
+                            ItemVendible item;
+                            String tipo = rsDetalle.getString("tipo_producto");
+
+                            switch (tipo) {
+                                case "UNITARIO":
+                                    ProductoUnitario unitario = new ProductoUnitario();
+                                    unitario.setPrecioUnitario(rsDetalle.getDouble("precio_unitario"));
+                                    unitario.setStockActual(rsDetalle.getInt("stock_actual"));
+                                    item = unitario;
+                                    break;
+                                case "GRANEL":
+                                    ProductoAGranel granel = new ProductoAGranel();
+                                    granel.setPrecioPorMedida(rsDetalle.getDouble("precio_por_medida"));
+                                    granel.setStockMedido(rsDetalle.getDouble("stock_medido"));
+                                    granel.setUnidadMedida(rsDetalle.getString("unidad_medida"));
+                                    item = granel;
+                                    break;
+                                case "SERVICIO":
+                                default:
+                                    Servicio servicio = new Servicio();
+                                    servicio.setTarifaServicio(rsDetalle.getDouble("tarifa_servicio"));
+                                    item = servicio;
+                                    break;
+                            }
+
+                            item.setProductoId(rsDetalle.getInt("producto_id"));
+                            item.setNombre(rsDetalle.getString("nombre"));
+                            item.setSku(rsDetalle.getString("sku"));
+
+                            detalle.setItem(item);
+                            detalles.add(detalle);
+                        }
+                    }
+                }
+                venta.setDetalles(detalles);
+            }
+
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Error al buscar la Venta completa por ID", ex);
         }

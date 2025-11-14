@@ -24,7 +24,7 @@ public class FrmDashboardCliente extends javax.swing.JFrame {
     private final VentaNegocio VENTA_NEGOCIO;
     private DefaultTableModel modeloTablaProductos;
     private DefaultTableModel modeloTablaCarrito;
-    private List<ItemVendible> listaProductos; 
+    private List<ItemVendible> listaProductos;
     private List<DetalleVenta> carrito;
 
     private double totalCarrito = 0.0;
@@ -44,7 +44,7 @@ public class FrmDashboardCliente extends javax.swing.JFrame {
         this.definirCabecerasCarrito();
         SpinnerNumberModel modelSpinner = new SpinnerNumberModel(1.0, 1.0, 100.0, 1.0);
         spinCantidad.setModel(modelSpinner);
-        this.listarProductos();
+        this.listarProductos("");
 
         btnAgregarCarrito.setEnabled(false);
         btnComprar.setEnabled(false);
@@ -94,13 +94,20 @@ public class FrmDashboardCliente extends javax.swing.JFrame {
         this.jTable1.getColumnModel().getColumn(2).setPreferredWidth(40);
     }
 
-    private void listarProductos() {
+    private void listarProductos(String terminoBusqueda) {
         try {
             modeloTablaProductos.setRowCount(0);
 
-            this.listaProductos = this.PRODUCTO_NEGOCIO.listar();
+            if (terminoBusqueda == null || terminoBusqueda.trim().isEmpty()) {
+                this.listaProductos = this.PRODUCTO_NEGOCIO.listar();
+            } else {
+                this.listaProductos = this.PRODUCTO_NEGOCIO.buscar(terminoBusqueda);
+            }
 
             if (this.listaProductos.isEmpty()) {
+                if (terminoBusqueda != null && !terminoBusqueda.trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "No se encontraron productos para '" + terminoBusqueda + "'.", "Búsqueda", JOptionPane.INFORMATION_MESSAGE);
+                }
                 return;
             }
 
@@ -209,7 +216,7 @@ public class FrmDashboardCliente extends javax.swing.JFrame {
         nuevaVenta.setDetalles(this.carrito);
         nuevaVenta.setTotal(this.totalCarrito);
         nuevaVenta.setFechaVenta(LocalDateTime.now());
-        nuevaVenta.setMetodoPago("Tarjeta"); 
+        nuevaVenta.setMetodoPago("Tarjeta");
         nuevaVenta.setReferenciaTransaccion("TXN-" + System.currentTimeMillis());
 
         String respuesta = this.VENTA_NEGOCIO.insertar(nuevaVenta);
@@ -220,16 +227,15 @@ public class FrmDashboardCliente extends javax.swing.JFrame {
             this.carrito.clear();
             this.totalCarrito = 0.0;
             actualizarTablaCarrito();
-            listarProductos();
+            this.listarProductos("");
         } else {
             JOptionPane.showMessageDialog(this, respuesta, "Error de Venta", JOptionPane.ERROR_MESSAGE);
 
             if (respuesta.contains("Stock insuficiente") || respuesta.contains("ya no existe")) {
-                listarProductos();
+                this.listarProductos("");
             }
         }
     }
-
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -237,6 +243,8 @@ public class FrmDashboardCliente extends javax.swing.JFrame {
 
         panelSuperior = new javax.swing.JPanel();
         lblBienvenida = new javax.swing.JLabel();
+        txtBuscarProducto = new javax.swing.JTextField();
+        btnBuscarProducto = new javax.swing.JButton();
         splitPaneTienda = new javax.swing.JSplitPane();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
@@ -256,21 +264,43 @@ public class FrmDashboardCliente extends javax.swing.JFrame {
 
         lblBienvenida.setText("Bienvenido a la Tienda");
 
+        txtBuscarProducto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtBuscarProductoActionPerformed(evt);
+            }
+        });
+
+        btnBuscarProducto.setText("Buscar");
+        btnBuscarProducto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarProductoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelSuperiorLayout = new javax.swing.GroupLayout(panelSuperior);
         panelSuperior.setLayout(panelSuperiorLayout);
         panelSuperiorLayout.setHorizontalGroup(
             panelSuperiorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelSuperiorLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblBienvenida)
-                .addContainerGap(378, Short.MAX_VALUE))
+                .addGroup(panelSuperiorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblBienvenida)
+                    .addGroup(panelSuperiorLayout.createSequentialGroup()
+                        .addComponent(txtBuscarProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnBuscarProducto)))
+                .addContainerGap(321, Short.MAX_VALUE))
         );
         panelSuperiorLayout.setVerticalGroup(
             panelSuperiorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelSuperiorLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lblBienvenida)
-                .addContainerGap(78, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panelSuperiorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtBuscarProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBuscarProducto))
+                .addContainerGap(44, Short.MAX_VALUE))
         );
 
         getContentPane().add(panelSuperior, java.awt.BorderLayout.NORTH);
@@ -404,40 +434,56 @@ public class FrmDashboardCliente extends javax.swing.JFrame {
 
     private void tablaProductosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaProductosMousePressed
         int fila = this.tablaProductos.getSelectedRow();
-        if (fila < 0) return; 
+        if (fila < 0) {
+            return;
+        }
 
         try {
             this.idProductoSeleccionado = (int) this.modeloTablaProductos.getValueAt(fila, 0);
-            
+
             btnAgregarCarrito.setEnabled(true);
-            
+
             Object stockObj = modeloTablaProductos.getValueAt(fila, 4);
-            
+
             if (stockObj instanceof Number) {
                 double stock = ((Number) stockObj).doubleValue();
-                
+
                 if (stock <= 0) {
                     btnAgregarCarrito.setEnabled(false);
                     JOptionPane.showMessageDialog(this, "No hay stock de este producto.", "Stock Agotado", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
-                
+
                 SpinnerNumberModel model = (SpinnerNumberModel) spinCantidad.getModel();
                 model.setMaximum(stock);
-                
+
                 if (model.getNumber().doubleValue() > stock) {
                     model.setValue(stock);
                 }
-                
+
             } else {
                 SpinnerNumberModel model = (SpinnerNumberModel) spinCantidad.getModel();
                 model.setMaximum(100.0); // Límite arbitrario para servicios
             }
 
         } catch (Exception e) {
-             JOptionPane.showMessageDialog(this, "Error al seleccionar producto: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error al seleccionar producto: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_tablaProductosMousePressed
+
+    private void txtBuscarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscarProductoActionPerformed
+        btnBuscarProducto.doClick();
+    }//GEN-LAST:event_txtBuscarProductoActionPerformed
+
+    private void btnBuscarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarProductoActionPerformed
+        String termino = txtBuscarProducto.getText().trim();
+        this.listarProductos(termino);
+
+        tablaProductos.clearSelection();
+        spinCantidad.setValue(1.0);
+        btnAgregarCarrito.setEnabled(false);
+        this.idProductoSeleccionado = -1;
+    }//GEN-LAST:event_btnBuscarProductoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -468,6 +514,7 @@ public class FrmDashboardCliente extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregarCarrito;
+    private javax.swing.JButton btnBuscarProducto;
     private javax.swing.JButton btnComprar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
@@ -483,5 +530,6 @@ public class FrmDashboardCliente extends javax.swing.JFrame {
     private javax.swing.JSplitPane splitPaneTienda;
     private javax.swing.JScrollPane tablaCarrito;
     private javax.swing.JTable tablaProductos;
+    private javax.swing.JTextField txtBuscarProducto;
     // End of variables declaration//GEN-END:variables
 }

@@ -6,6 +6,7 @@ public class Proveedor {
     private String ruc;
     private String email;
     private String telefono;
+    private String direccion;
     private boolean activo;
     
 
@@ -47,6 +48,14 @@ public class Proveedor {
 
     public void setTelefono(String telefono) {
         this.telefono = telefono;
+    }
+    
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
     }
 
     public boolean isActivo() {
