@@ -1,5 +1,6 @@
 package com.ferreteria.presentacion;
 
+import com.ferreteria.entidades.Empleado;
 import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
@@ -7,12 +8,15 @@ import javax.swing.JInternalFrame;
 public class FrmDashboardAdmin extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmDashboardAdmin.class.getName());
+    
+    private Empleado empleadoLogueado;
 
-    public FrmDashboardAdmin() {
+    public FrmDashboardAdmin(Empleado empleado) {
         initComponents();
+        this.empleadoLogueado = empleado; 
         this.setSize(1050, 700);
         this.setLocationRelativeTo(null);
-        this.setTitle("Panel de Administración - FerreteriaApp");
+        this.setTitle("Panel de Administración - FerreteriaApp - Usuario: " + empleado.getEmail());
     }
 
     @SuppressWarnings("unchecked")
@@ -25,6 +29,7 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
         itemGestionProductos = new javax.swing.JMenuItem();
         itemGestionEmpleados = new javax.swing.JMenuItem();
         itemGestionProveedores = new javax.swing.JMenuItem();
+        itemRegistroCompra = new javax.swing.JMenuItem();
         menuReportes = new javax.swing.JMenu();
         itemReporteVentas = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
@@ -62,7 +67,20 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
         menuGestion.add(itemGestionEmpleados);
 
         itemGestionProveedores.setText("Gestionar Proveedores\"");
+        itemGestionProveedores.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemGestionProveedoresActionPerformed(evt);
+            }
+        });
         menuGestion.add(itemGestionProveedores);
+
+        itemRegistroCompra.setText("Registro de Compras");
+        itemRegistroCompra.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemRegistroCompraActionPerformed(evt);
+            }
+        });
+        menuGestion.add(itemRegistroCompra);
 
         jMenuBar1.add(menuGestion);
 
@@ -126,26 +144,18 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_itemSalirActionPerformed
 
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void itemGestionProveedoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemGestionProveedoresActionPerformed
+        FrmGestionProveedores frm = new FrmGestionProveedores();
+        abrirVentanaInterna(frm);
+    }//GEN-LAST:event_itemGestionProveedoresActionPerformed
 
-        java.awt.EventQueue.invokeLater(() -> new FrmDashboardAdmin().setVisible(true));
-    }
+    private void itemRegistroCompraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemRegistroCompraActionPerformed
+        FrmRegistroCompra frm = new FrmRegistroCompra(this.empleadoLogueado);
+        abrirVentanaInterna(frm);
+    }//GEN-LAST:event_itemRegistroCompraActionPerformed
+
+    
+
 
     private void abrirVentanaInterna(JInternalFrame frame) {
         for (JInternalFrame openFrame : desktopPrincipal.getAllFrames()) {
@@ -180,6 +190,7 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
     private javax.swing.JMenuItem itemGestionEmpleados;
     private javax.swing.JMenuItem itemGestionProductos;
     private javax.swing.JMenuItem itemGestionProveedores;
+    private javax.swing.JMenuItem itemRegistroCompra;
     private javax.swing.JMenuItem itemReporteVentas;
     private javax.swing.JMenuItem itemSalir;
     private javax.swing.JMenu jMenu3;

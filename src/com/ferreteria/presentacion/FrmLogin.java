@@ -131,7 +131,8 @@ public class FrmLogin extends javax.swing.JFrame {
         if (empleadoOpt.isPresent()) {
             lblMensaje.setText("");
 
-            FrmDashboardAdmin adminDash = new FrmDashboardAdmin();
+            Empleado empleadoLogueado = empleadoOpt.get();
+            FrmDashboardAdmin adminDash = new FrmDashboardAdmin(empleadoLogueado);
 
             adminDash.setSize(1280, 720);
             adminDash.setLocationRelativeTo(null);

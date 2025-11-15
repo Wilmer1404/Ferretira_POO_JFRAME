@@ -9,6 +9,7 @@ public class Compra {
     private Empleado empleado;
     private LocalDateTime fechaCompra;
     private double total;
+    private String observaciones;
     private List<DetalleCompra> detalles;
     
 
@@ -50,6 +51,14 @@ public class Compra {
 
     public void setTotal(double total) {
         this.total = total;
+    }
+    
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
     }
 
     public List<DetalleCompra> getDetalles() {

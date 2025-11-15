@@ -1,17 +1,17 @@
 package com.ferreteria.negocio;
 
-import com.ferreteria.conexion.Conexion; // Causa esto necesario para la conexión local
+import com.ferreteria.conexion.Conexion;
 import com.ferreteria.datos.impl.ProductoDAOImpl;
 import com.ferreteria.datos.interfaces.IProductoDAO;
 import com.ferreteria.entidades.ItemVendible;
 import com.ferreteria.entidades.ProductoAGranel;
 import com.ferreteria.entidades.ProductoUnitario;
 import com.ferreteria.entidades.Servicio;
-import java.sql.Connection; 
-import java.sql.SQLException; 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level; 
-import java.util.logging.Logger; 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ProductoNegocio {
 
@@ -38,7 +38,7 @@ public class ProductoNegocio {
     }
 
     public List<ItemVendible> listarStockBajo(int nivelMinimo) {
-         return new java.util.ArrayList<ItemVendible>();
+        return this.DATOS_PROD.listarStockBajo(nivelMinimo);
     }
 
     public String insertar(ItemVendible item) {
@@ -68,8 +68,8 @@ public class ProductoNegocio {
         }
     }
 
-    public boolean actualizarStock(ItemVendible item, Connection conn) {
-        return this.DATOS_PROD.actualizarStock(item, conn);
+    public boolean actualizarStock(int productoId, double cantidad, String tipoProducto, Connection conn) {
+        return this.DATOS_PROD.actualizarStock(productoId, cantidad, tipoProducto, conn);
     }
 
     public String desactivar(int id) {
@@ -86,17 +86,7 @@ public class ProductoNegocio {
             return "Error desconocido al desactivar el producto.";
         }
     }
-
-
-    public boolean actualizarStock(ItemVendible item) {
-        try (Connection conn = Conexion.obtenerConexion()) {
-            return this.DATOS_PROD.actualizarStock(item, conn);
-        } catch (SQLException | RuntimeException e) {
-            LOGGER.log(Level.SEVERE, "Error en actualizarStock no transaccional", e);
-            return false;
-        }
-    }
-
+    
     private String validar(ItemVendible item) {
         if (item.getNombre() == null || item.getNombre().trim().isEmpty()) {
             return "El nombre del producto no puede estar vacío.";
@@ -104,7 +94,6 @@ public class ProductoNegocio {
         if (item.getSku() == null || item.getSku().trim().isEmpty()) {
             return "El SKU del producto no puede estar vacío.";
         }
-
         if (item instanceof ProductoUnitario) {
             ProductoUnitario pu = (ProductoUnitario) item;
             if (pu.getPrecioUnitario() <= 0) {
@@ -130,7 +119,6 @@ public class ProductoNegocio {
                 return "La tarifa del servicio debe ser mayor a 0.";
             }
         }
-
         return null;
     }
 }

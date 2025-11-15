@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 public class ProductoDAOImpl implements IProductoDAO {
 
     private static final Logger LOGGER = Logger.getLogger(ProductoDAOImpl.class.getName());
-    
+
     public ProductoDAOImpl() {
     }
 
@@ -48,25 +48,20 @@ public class ProductoDAOImpl implements IProductoDAO {
                 item = servicio;
                 break;
         }
-
         item.setProductoId(rs.getInt("producto_id"));
         item.setSku(rs.getString("sku"));
         item.setNombre(rs.getString("nombre"));
         item.setDescripcion(rs.getString("descripcion"));
         item.setActivo(rs.getBoolean("activo"));
-        
         Categoria cat = new Categoria();
         cat.setCategoriaId(rs.getInt("categoria_id"));
         cat.setNombre(rs.getString("categoria_nombre"));
         item.setCategoria(cat);
-
         return item;
     }
-    
     public ItemVendible fabricarItemDesdeResultSet(ResultSet rs) throws SQLException {
-         return mapearResultSet(rs);
+        return mapearResultSet(rs);
     }
-
     @Override
     public List<ItemVendible> listarTodos() {
         List<ItemVendible> lista = new ArrayList<>();
@@ -74,11 +69,7 @@ public class ProductoDAOImpl implements IProductoDAO {
                 + "LEFT JOIN Categoria c ON p.categoria_id = c.categoria_id "
                 + "WHERE p.activo = TRUE "
                 + "ORDER BY p.nombre ASC";
-        
-        try (Connection conn = Conexion.obtenerConexion();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            
+        try (Connection conn = Conexion.obtenerConexion(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 lista.add(mapearResultSet(rs));
             }
@@ -87,16 +78,12 @@ public class ProductoDAOImpl implements IProductoDAO {
         }
         return lista;
     }
-
     @Override
     public ItemVendible buscarPorId(Integer id) {
         String sql = "SELECT p.*, c.nombre as categoria_nombre FROM Producto p "
                 + "LEFT JOIN Categoria c ON p.categoria_id = c.categoria_id "
                 + "WHERE p.producto_id = ?";
-        
-        try (Connection conn = Conexion.obtenerConexion();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+        try (Connection conn = Conexion.obtenerConexion(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -109,23 +96,21 @@ public class ProductoDAOImpl implements IProductoDAO {
         return null;
     }
 
+
     @Override
     public boolean insertar(ItemVendible entidad) {
         String sql = "INSERT INTO Producto (sku, nombre, descripcion, categoria_id, activo, tipo_producto, "
                 + "precio_unitario, stock_actual, precio_por_medida, stock_medido, unidad_medida, tarifa_servicio) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
-        try (Connection conn = Conexion.obtenerConexion();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+        try (Connection conn = Conexion.obtenerConexion(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, entidad.getSku());
             ps.setString(2, entidad.getNombre());
             ps.setString(3, entidad.getDescripcion());
             ps.setInt(4, entidad.getCategoria().getCategoriaId());
             ps.setBoolean(5, entidad.isActivo());
             
-            ps.setString(6, entidad.getClass().getSimpleName().toUpperCase()); 
             if (entidad instanceof ProductoUnitario) {
+                ps.setString(6, "UNITARIO");
                 ProductoUnitario pu = (ProductoUnitario) entidad;
                 ps.setDouble(7, pu.getPrecioUnitario());
                 ps.setInt(8, pu.getStockActual());
@@ -134,6 +119,7 @@ public class ProductoDAOImpl implements IProductoDAO {
                 ps.setNull(11, java.sql.Types.VARCHAR);
                 ps.setNull(12, java.sql.Types.DECIMAL);
             } else if (entidad instanceof ProductoAGranel) {
+                ps.setString(6, "GRANEL");
                 ProductoAGranel pg = (ProductoAGranel) entidad;
                 ps.setNull(7, java.sql.Types.DECIMAL);
                 ps.setNull(8, java.sql.Types.INTEGER);
@@ -142,6 +128,7 @@ public class ProductoDAOImpl implements IProductoDAO {
                 ps.setString(11, pg.getUnidadMedida());
                 ps.setNull(12, java.sql.Types.DECIMAL);
             } else if (entidad instanceof Servicio) {
+                ps.setString(6, "SERVICIO");
                 Servicio s = (Servicio) entidad;
                 ps.setNull(7, java.sql.Types.DECIMAL);
                 ps.setNull(8, java.sql.Types.INTEGER);
@@ -150,9 +137,7 @@ public class ProductoDAOImpl implements IProductoDAO {
                 ps.setNull(11, java.sql.Types.VARCHAR);
                 ps.setDouble(12, s.getTarifaServicio());
             }
-            
             return ps.executeUpdate() > 0;
-            
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Error al insertar producto", ex);
             return false;
@@ -165,9 +150,7 @@ public class ProductoDAOImpl implements IProductoDAO {
                 + "tipo_producto=?, precio_unitario=?, stock_actual=?, "
                 + "precio_por_medida=?, stock_medido=?, unidad_medida=?, tarifa_servicio=? "
                 + "WHERE producto_id = ?";
-        
-        try (Connection conn = Conexion.obtenerConexion();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = Conexion.obtenerConexion(); PreparedStatement ps = conn.prepareStatement(sql)) {
             
             ps.setString(1, entidad.getSku());
             ps.setString(2, entidad.getNombre());
@@ -175,8 +158,8 @@ public class ProductoDAOImpl implements IProductoDAO {
             ps.setInt(4, entidad.getCategoria().getCategoriaId());
             ps.setBoolean(5, entidad.isActivo());
             
-            ps.setString(6, entidad.getClass().getSimpleName().toUpperCase());
             if (entidad instanceof ProductoUnitario) {
+                ps.setString(6, "UNITARIO");
                 ProductoUnitario pu = (ProductoUnitario) entidad;
                 ps.setDouble(7, pu.getPrecioUnitario());
                 ps.setInt(8, pu.getStockActual());
@@ -185,6 +168,7 @@ public class ProductoDAOImpl implements IProductoDAO {
                 ps.setNull(11, java.sql.Types.VARCHAR);
                 ps.setNull(12, java.sql.Types.DECIMAL);
             } else if (entidad instanceof ProductoAGranel) {
+                ps.setString(6, "GRANEL");
                 ProductoAGranel pg = (ProductoAGranel) entidad;
                 ps.setNull(7, java.sql.Types.DECIMAL);
                 ps.setNull(8, java.sql.Types.INTEGER);
@@ -193,6 +177,7 @@ public class ProductoDAOImpl implements IProductoDAO {
                 ps.setString(11, pg.getUnidadMedida());
                 ps.setNull(12, java.sql.Types.DECIMAL);
             } else if (entidad instanceof Servicio) {
+                ps.setString(6, "SERVICIO");
                 Servicio s = (Servicio) entidad;
                 ps.setNull(7, java.sql.Types.DECIMAL);
                 ps.setNull(8, java.sql.Types.INTEGER);
@@ -201,11 +186,8 @@ public class ProductoDAOImpl implements IProductoDAO {
                 ps.setNull(11, java.sql.Types.VARCHAR);
                 ps.setDouble(12, s.getTarifaServicio());
             }
-            
-            ps.setInt(13, entidad.getProductoId()); 
-            
+            ps.setInt(13, entidad.getProductoId());
             return ps.executeUpdate() > 0;
-            
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Error al actualizar producto", ex);
             return false;
@@ -215,13 +197,9 @@ public class ProductoDAOImpl implements IProductoDAO {
     @Override
     public boolean eliminar(Integer id) {
         String sql = "UPDATE Producto SET activo = FALSE WHERE producto_id = ?";
-        
-        try (Connection conn = Conexion.obtenerConexion();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+        try (Connection conn = Conexion.obtenerConexion(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             return ps.executeUpdate() > 0;
-            
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Error al desactivar producto", ex);
             return false;
@@ -235,14 +213,10 @@ public class ProductoDAOImpl implements IProductoDAO {
                 + "LEFT JOIN Categoria c ON p.categoria_id = c.categoria_id "
                 + "WHERE (p.nombre ILIKE ? OR p.sku ILIKE ?) AND p.activo = TRUE "
                 + "ORDER BY p.nombre ASC";
-        
-        try (Connection conn = Conexion.obtenerConexion();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+        try (Connection conn = Conexion.obtenerConexion(); PreparedStatement ps = conn.prepareStatement(sql)) {
             String termino = "%" + nombre + "%";
             ps.setString(1, termino);
             ps.setString(2, termino);
-            
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     lista.add(mapearResultSet(rs));
@@ -253,6 +227,7 @@ public class ProductoDAOImpl implements IProductoDAO {
         }
         return lista;
     }
+
 
     @Override
     public List<ItemVendible> listarStockBajo(int nivelMinimo) {
@@ -266,10 +241,8 @@ public class ProductoDAOImpl implements IProductoDAO {
         
         try (Connection conn = Conexion.obtenerConexion();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            
-            ps.setInt(1, nivelMinimo);    
-            ps.setDouble(2, nivelMinimo); 
-            
+            ps.setInt(1, nivelMinimo);
+            ps.setDouble(2, nivelMinimo);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     lista.add(mapearResultSet(rs));
@@ -282,21 +255,21 @@ public class ProductoDAOImpl implements IProductoDAO {
     }
 
     @Override
-    public boolean actualizarStock(ItemVendible item, Connection conn) {
+    public boolean actualizarStock(int productoId, double cantidad, String tipoProducto, Connection conn) {
         String sql;
         try {
-            if (item instanceof ProductoUnitario) {
-                sql = "UPDATE Producto SET stock_actual = ? WHERE producto_id = ?";
+            if (tipoProducto.equals("UNITARIO")) {
+                sql = "UPDATE Producto SET stock_actual = stock_actual + ? WHERE producto_id = ?";
                 try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                    ps.setInt(1, ((ProductoUnitario) item).getStockActual());
-                    ps.setInt(2, item.getProductoId());
+                    ps.setInt(1, (int) cantidad);
+                    ps.setInt(2, productoId);
                     return ps.executeUpdate() > 0;
                 }
-            } else if (item instanceof ProductoAGranel) {
-                sql = "UPDATE Producto SET stock_medido = ? WHERE producto_id = ?";
+            } else if (tipoProducto.equals("GRANEL")) {
+                sql = "UPDATE Producto SET stock_medido = stock_medido + ? WHERE producto_id = ?";
                  try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                    ps.setDouble(1, ((ProductoAGranel) item).getStockMedido());
-                    ps.setInt(2, item.getProductoId());
+                    ps.setDouble(1, cantidad);
+                    ps.setInt(2, productoId);
                     return ps.executeUpdate() > 0;
                 }
             } else {
@@ -307,14 +280,5 @@ public class ProductoDAOImpl implements IProductoDAO {
             throw new RuntimeException(ex); 
         }
     }
-
-    @Override
-    public boolean actualizarStock(ItemVendible item) {
-        try (Connection conn = Conexion.obtenerConexion()) {
-            return this.actualizarStock(item, conn);
-        } catch (SQLException | RuntimeException e) {
-            LOGGER.log(Level.SEVERE, "Error al actualizar stock (no transaccional)", e);
-            return false;
-        }
-    }
+    
 }
