@@ -268,8 +268,6 @@ Sigue estos pasos para ejecutar el proyecto localmente.
     * **Usuario:** `admin@ferreteria.com`
     * **Contraseña:** `admin123`
 
-> **Nota de Seguridad:** El sistema actual compara contraseñas en texto plano (`EmpleadoNegocio.java`). El campo `password_hash` está nombrado para una futura implementación de hashing (ej. Bcrypt), pero actualmente funciona con texto plano.
-
 ---
 
 ## 👥 Autores
