@@ -11,6 +11,8 @@ import javax.swing.table.DefaultTableModel;
 import com.ferreteria.negocio.ClienteNegocio;
 import com.ferreteria.entidades.Cliente;
 import java.util.ArrayList;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 
 public class FrmReporteVentas extends javax.swing.JInternalFrame {
 
@@ -27,10 +29,23 @@ public class FrmReporteVentas extends javax.swing.JInternalFrame {
 
         this.VENTA_NEGOCIO = new VentaNegocio();
         this.CLIENTE_NEGOCIO = new ClienteNegocio();
-        this.listaActual = new ArrayList<>();
+        this.listaActual = new ArrayList<>();        
         this.definirCabecerasTabla();
+        setClosable(true);
+        setResizable(true);
+        this.refrescarDatos(); 
+        this.addInternalFrameListener(new InternalFrameAdapter() {
+            @Override
+            public void internalFrameActivated(InternalFrameEvent evt) {
+                refrescarDatos();
+            }
+        });
+    }
+    
+    private void refrescarDatos() {
         this.listarVentas();
-        btnVerDetalle.setEnabled(false);
+        this.txtBuscarDni.setText("");
+        this.btnVerDetalle.setEnabled(false);
     }
 
     private void definirCabecerasTabla() {
@@ -189,8 +204,7 @@ public class FrmReporteVentas extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnRefrescarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefrescarActionPerformed
-        this.txtBuscarDni.setText("");
-        this.listarVentas();
+        this.refrescarDatos();
     }//GEN-LAST:event_btnRefrescarActionPerformed
 
     private void btnVerDetalleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerDetalleActionPerformed
