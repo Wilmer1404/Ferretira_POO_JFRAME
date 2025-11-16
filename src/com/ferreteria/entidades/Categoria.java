@@ -1,13 +1,30 @@
 package com.ferreteria.entidades;
 
+/**
+ * Entidad que representa una categoría de productos en la ferretería.
+ * Las categorías permiten organizar y clasificar los productos para
+ * facilitar la búsqueda y gestión del inventario.
+ * 
+ * Ejemplos: Herramientas, Materiales de Construcción, Plomería, Electricidad, etc.
+ */
 public class Categoria {
-    private int categoriaId;
-    private String nombre;
-    private String descripcion;
+    private int categoriaId;      // ID único de la categoría
+    private String nombre;        // Nombre de la categoría
+    private String descripcion;   // Descripción detallada de la categoría
 
+    /**
+     * Constructor por defecto
+     */
     public Categoria() {
     }
 
+    /**
+     * Constructor con parámetros para crear una categoría completa
+     * 
+     * @param categoriaId ID de la categoría
+     * @param nombre Nombre de la categoría
+     * @param descripcion Descripción de la categoría
+     */
     public Categoria(int categoriaId, String nombre, String descripcion) {
         this.categoriaId = categoriaId;
         this.nombre = nombre;

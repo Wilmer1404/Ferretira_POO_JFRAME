@@ -2,17 +2,26 @@ package com.ferreteria.entidades;
 
 import java.util.Objects;
 
+/**
+ * Entidad que representa un proveedor de productos para la ferretería.
+ * Almacena información comercial y de contacto de las empresas proveedoras
+ * que suministran productos al inventario de la ferretería.
+ * 
+ * Los proveedores están asociados a las compras que realiza la ferretería
+ * para reabastecer el inventario de productos.
+ */
 public class Proveedor {
 
-    private int proveedorId;
-    private String razonSocial;
-    private String ruc;
-    private String email;
-    private String telefono;
-    private String direccion;
-    private boolean activo;
+    private int proveedorId;        // ID único del proveedor
+    private String razonSocial;     // Nombre comercial de la empresa proveedora
+    private String ruc;             // Registro Único de Contribuyentes
+    private String email;           // Correo electrónico de contacto
+    private String telefono;        // Número de teléfono de contacto
+    private String direccion;       // Dirección comercial del proveedor
+    private boolean activo;         // Estado del proveedor (activo/inactivo)
 
-    // --- MEJORA 1: Constructores ---
+    // --- CONSTRUCTORES ---
+    
     /**
      * Constructor vacío (buena práctica tenerlo explícito).
      */
@@ -21,6 +30,13 @@ public class Proveedor {
 
     /**
      * Constructor para crear un proveedor nuevo (sin ID, la BD lo asigna).
+     * 
+     * @param razonSocial Nombre comercial del proveedor
+     * @param ruc Registro Único de Contribuyentes
+     * @param email Correo electrónico de contacto
+     * @param telefono Teléfono de contacto
+     * @param direccion Dirección del proveedor
+     * @param activo Estado del proveedor
      */
     public Proveedor(String razonSocial, String ruc, String email, String telefono, String direccion, boolean activo) {
         this.razonSocial = razonSocial;
@@ -33,6 +49,14 @@ public class Proveedor {
 
     /**
      * Constructor completo (para cuando lees desde la BD).
+     * 
+     * @param proveedorId ID único del proveedor
+     * @param razonSocial Nombre comercial del proveedor
+     * @param ruc Registro Único de Contribuyentes
+     * @param email Correo electrónico de contacto
+     * @param telefono Teléfono de contacto
+     * @param direccion Dirección del proveedor
+     * @param activo Estado del proveedor
      */
     public Proveedor(int proveedorId, String razonSocial, String ruc, String email, String telefono, String direccion, boolean activo) {
         this.proveedorId = proveedorId;

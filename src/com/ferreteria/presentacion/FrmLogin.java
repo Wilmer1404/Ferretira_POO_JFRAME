@@ -7,6 +7,21 @@ import com.ferreteria.negocio.EmpleadoNegocio;
 import java.util.Optional;
 import javax.swing.JOptionPane;
 
+/**
+ * Formulario de login del sistema de ferretería.
+ * Permite la autenticación tanto de clientes como de empleados.
+ * 
+ * Funcionalidades:
+ * - Login dual: clientes y empleados usan el mismo formulario
+ * - Validación de credenciales con BCrypt
+ * - Redirección automática según el tipo de usuario:
+ *   * Clientes → Dashboard del Cliente
+ *   * Empleados → Dashboard Administrativo (según rol)
+ * - Enlace para registro de nuevos clientes
+ * 
+ * Esta es la puerta de entrada al sistema y determina
+ * el flujo de navegación según el tipo de usuario.
+ */
 public class FrmLogin extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmLogin.class.getName());

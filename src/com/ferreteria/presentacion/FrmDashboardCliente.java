@@ -17,6 +17,22 @@ import javax.swing.JOptionPane;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.table.DefaultTableModel;
 
+/**
+ * Dashboard principal para clientes de la ferretería.
+ * Interfaz donde los clientes pueden navegar productos y realizar compras.
+ * 
+ * Funcionalidades principales:
+ * - Catálogo de productos con búsqueda y filtros
+ * - Carrito de compras con gestión de items
+ * - Cálculo automático de totales y subtotales
+ * - Procesamiento de compras con validación de stock
+ * - Visualización de información del cliente logueado
+ * 
+ * Maneja diferentes tipos de productos:
+ * - ProductoUnitario: se venden por unidades enteras
+ * - ProductoAGranel: se venden por peso/medida con decimales
+ * - Servicio: disponibilidad ilimitada
+ */
 public class FrmDashboardCliente extends javax.swing.JFrame {
 
     private final Cliente clienteLogueado;

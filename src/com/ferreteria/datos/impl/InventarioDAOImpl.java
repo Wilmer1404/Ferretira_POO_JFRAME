@@ -30,7 +30,6 @@ public class InventarioDAOImpl implements IInventarioDAO {
         }
     }
 
-    // --- CORREGIDO: Acepta empleadoId ---
     private void insertarMovimiento(int productoId, String tipoMov, double cantidad, 
                                     Integer ventaId, Integer compraId, int empleadoId, 
                                     double stockAnterior, double stockNuevo, Connection conn) throws SQLException {
