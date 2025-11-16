@@ -6,6 +6,8 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 
 public class FrmGestionProveedores extends javax.swing.JInternalFrame {
 
@@ -19,10 +21,27 @@ public class FrmGestionProveedores extends javax.swing.JInternalFrame {
 
         this.setSize(900, 600);
         this.PROVEEDOR_NEGOCIO = new ProveedorNegocio();
+        
         this.definirCabecerasTabla();
-        this.cargarComboActivo();
-        this.listarProveedores("");
-        this.gestionarEstadoFormulario("INICIO");
+        this.cargarComboActivo(); 
+
+        setClosable(true);
+        setResizable(true);
+        this.refrescarDatos(); 
+
+        this.addInternalFrameListener(new InternalFrameAdapter() {
+            @Override
+            public void internalFrameActivated(InternalFrameEvent evt) {
+                refrescarDatos();
+            }
+        });
+    }
+    
+    
+    private void refrescarDatos() {
+        this.listarProveedores("");         
+        this.gestionarEstadoFormulario("INICIO");        
+        this.txtBuscar.setText("");
     }
 
     private void definirCabecerasTabla() {

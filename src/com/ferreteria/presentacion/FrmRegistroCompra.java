@@ -18,6 +18,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.event.MouseEvent;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 
 public class FrmRegistroCompra extends javax.swing.JInternalFrame {
 
@@ -50,12 +52,28 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
 
         this.definirCabecerasTablas();
         this.configurarSpinners();
+
+        setClosable(true);
+        setResizable(true);
+        this.refrescarDatos();
+        this.addInternalFrameListener(new InternalFrameAdapter() {
+            @Override
+            public void internalFrameActivated(InternalFrameEvent evt) {
+                refrescarDatos();
+            }
+        });
+
+    }
+
+    private void refrescarDatos() {
         this.cargarProveedores();
-        this.listarProductos("");
+        this.listarProductos(txtBuscarProducto.getText().trim());
     }
 
     private void cargarProveedores() {
         try {
+            Object seleccionActual = cmbProveedor.getSelectedItem();
+
             DefaultComboBoxModel modeloCombo = new DefaultComboBoxModel();
             List<Proveedor> proveedores = this.PROVEEDOR_NEGOCIO.listar();
 
@@ -67,6 +85,13 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
                 modeloCombo.addElement(p);
             }
             this.cmbProveedor.setModel(modeloCombo);
+
+            if (seleccionActual != null && (seleccionActual instanceof Proveedor)) {
+                Proveedor provActual = (Proveedor) seleccionActual;
+                if (provActual.getProveedorId() != 0) { 
+                    cmbProveedor.setSelectedItem(seleccionActual);
+                }
+            }
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error al cargar proveedores: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -113,7 +138,7 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
     private void listarProductos(String terminoBusqueda) {
         try {
             modeloTablaProductos.setRowCount(0);
-            this.itemSeleccionado = null; 
+            this.itemSeleccionado = null;
 
             this.listaProductosCache = this.PRODUCTO_NEGOCIO.buscar(terminoBusqueda);
 
@@ -133,11 +158,11 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this, "Error al cargar productos: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     private void actualizarTablaCompra() {
         modeloTablaCompra.setRowCount(0);
         this.totalCompra = 0.0;
-        
+
         for (DetalleCompra det : this.carritoCompra) {
             Object[] fila = new Object[5];
             fila[0] = det.getItem().getProductoId();
@@ -145,34 +170,32 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
             fila[2] = det.getCantidad();
             fila[3] = String.format("%.2f", det.getPrecioCompra());
             fila[4] = String.format("%.2f", det.getSubtotal());
-            
+
             modeloTablaCompra.addRow(fila);
             this.totalCompra += det.getSubtotal();
         }
-        
+
         lblTotalCompra.setText(String.format("Total Costo: S/ %.2f", this.totalCompra));
     }
-    
+
     private void limpiarFormularioCompleto() {
         this.totalCompra = 0.0;
         this.carritoCompra.clear();
         this.itemSeleccionado = null;
         actualizarTablaCompra();
-        
+
         this.cmbProveedor.setSelectedIndex(0);
         this.txtObservaciones.setText("");
         this.txtBuscarProducto.setText("");
         this.spinCantidad.setValue(1.0);
         this.spinCosto.setValue(0.0);
-        
+
         this.listarProductos("");
     }
-
 
     private void btnBuscarProductoActionPerformed(java.awt.event.ActionEvent evt) {
         this.listarProductos(txtBuscarProducto.getText().trim());
     }
-
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -401,6 +424,11 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
         lblProveedor.setText("Proveedor:");
 
         cmbProveedor.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbProveedor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbProveedorActionPerformed(evt);
+            }
+        });
 
         lblObservaciones.setText("Observaciones:");
 
@@ -478,7 +506,7 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this, "Por favor, seleccione un producto de la lista izquierda.", "Error", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
+
         double cantidad = ((Number) spinCantidad.getValue()).doubleValue();
         double costo = ((Number) spinCosto.getValue()).doubleValue();
 
@@ -490,16 +518,16 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this, "Debe especificar el Precio de Compra (Costo).", "Validación", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
+
         DetalleCompra detalle = new DetalleCompra();
         detalle.setItem(this.itemSeleccionado);
         detalle.setCantidad(cantidad);
         detalle.setPrecioCompra(costo);
         detalle.setSubtotal(cantidad * costo);
-        
+
         this.carritoCompra.add(detalle);
         this.actualizarTablaCompra();
-        
+
         this.itemSeleccionado = null;
         this.tablaProductos.clearSelection();
         this.spinCosto.setValue(0.0);
@@ -512,14 +540,14 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this, "Debe seleccionar un item del carrito de compra.", "Validación", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
+
         this.carritoCompra.remove(fila);
         this.actualizarTablaCompra();
     }//GEN-LAST:event_btnQuitarItemActionPerformed
 
     private void btnRegistrarCompraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarCompraActionPerformed
         Object itemProveedor = cmbProveedor.getSelectedItem();
-        if (itemProveedor == null || !(itemProveedor instanceof Proveedor) || ((Proveedor)itemProveedor).getProveedorId() == 0) { 
+        if (itemProveedor == null || !(itemProveedor instanceof Proveedor) || ((Proveedor) itemProveedor).getProveedorId() == 0) {
             JOptionPane.showMessageDialog(this, "Debe seleccionar un Proveedor.", "Validación", JOptionPane.WARNING_MESSAGE);
             return;
         }
@@ -534,14 +562,14 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
         nuevaCompra.setDetalles(this.carritoCompra);
         nuevaCompra.setTotal(this.totalCompra);
         nuevaCompra.setObservaciones(txtObservaciones.getText().trim());
-        nuevaCompra.setFechaCompra(LocalDateTime.now()); 
+        nuevaCompra.setFechaCompra(LocalDateTime.now());
 
         String respuesta = this.COMPRA_NEGOCIO.registrarCompra(nuevaCompra);
-        
+
         if (respuesta == null) {
             JOptionPane.showMessageDialog(this, "Compra registrada y stock actualizado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             limpiarFormularioCompleto();
-            this.listarProductos(txtBuscarProducto.getText().trim()); 
+            this.listarProductos(txtBuscarProducto.getText().trim());
         } else {
             JOptionPane.showMessageDialog(this, "Error al registrar la compra:\n" + respuesta, "Error de Transacción", JOptionPane.ERROR_MESSAGE);
         }
@@ -568,13 +596,17 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_tablaProductosMousePressed
 
+    private void cmbProveedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbProveedorActionPerformed
+
+    }//GEN-LAST:event_cmbProveedorActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregar;
     private javax.swing.JButton btnBuscarProducto;
     private javax.swing.JButton btnQuitarItem;
     private javax.swing.JButton btnRegistrarCompra;
-    private javax.swing.JComboBox<String> cmbProveedor;
+    private javax.swing.JComboBox<Object> cmbProveedor;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;

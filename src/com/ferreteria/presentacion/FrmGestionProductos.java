@@ -12,6 +12,8 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 
 public class FrmGestionProductos extends javax.swing.JInternalFrame {
 
@@ -24,20 +26,31 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
 
     public FrmGestionProductos() {
         initComponents();
-
         this.setSize(900, 600);
         this.setMinimumSize(new java.awt.Dimension(800, 500));
         this.PRODUCTO_NEGOCIO = new ProductoNegocio();
         this.CATEGORIA_NEGOCIO = new CategoriaNegocio();
 
         this.definirCabecerasTabla();
-        this.listarProductos("");
-
         this.cargarComboTipoProducto();
+        this.configurarSpinners();
+        
+        this.refrescarDatos(); 
+
+        this.addInternalFrameListener(new InternalFrameAdapter() {
+            @Override
+            public void internalFrameActivated(InternalFrameEvent evt) {
+                refrescarDatos();
+            }
+        });
+        
+    }
+    
+    
+    private void refrescarDatos() {
+        this.listarProductos(txtBuscar.getText().trim()); 
         this.cargarComboCategorias();
         this.gestionarEstadoFormulario("INICIO");
-        this.configurarSpinners();
-
         this.gestionarCamposPolimorficos();
     }
 
@@ -76,6 +89,8 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
     }
 
     private void cargarComboCategorias() {
+        Object seleccionActual = cmbCategoria.getSelectedItem();
+        
         DefaultComboBoxModel<Object> modeloCombo = (DefaultComboBoxModel<Object>) cmbCategoria.getModel();
         modeloCombo.removeAllElements();
 
@@ -86,7 +101,18 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
         }
 
         cmbCategoria.setModel(modeloCombo);
-        cmbCategoria.setSelectedIndex(-1);
+        
+        if (seleccionActual != null) {
+            for (int i = 0; i < modeloCombo.getSize(); i++) {
+                Categoria cat = (Categoria) modeloCombo.getElementAt(i);
+                if (cat.equals(seleccionActual)) { 
+                    cmbCategoria.setSelectedIndex(i);
+                    break;
+                }
+            }
+        } else {
+             cmbCategoria.setSelectedIndex(-1);
+        }
     }
 
     private void configurarSpinners() {

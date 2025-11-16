@@ -6,6 +6,8 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 
 public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
 
@@ -16,14 +18,29 @@ public class FrmGestionEmpleados extends javax.swing.JInternalFrame {
 
     public FrmGestionEmpleados() {
         initComponents();
+        
         this.setSize(900, 600);
         this.setMinimumSize(new java.awt.Dimension(800, 500));
-
         this.EMPLEADO_NEGOCIO = new EmpleadoNegocio();
+        
         this.definirCabecerasTabla();
-        this.cargarCombos();
+        this.cargarCombos(); 
+
+        setClosable(true);
+        setResizable(true);
+        this.refrescarDatos(); 
+        this.addInternalFrameListener(new InternalFrameAdapter() {
+            @Override
+            public void internalFrameActivated(InternalFrameEvent evt) {
+                refrescarDatos();
+            }
+        });
+    }
+    
+    
+    private void refrescarDatos() {
         this.listarEmpleados();
-        this.gestionarEstadoFormulario("INICIO");
+            this.gestionarEstadoFormulario("INICIO");
     }
 
     private void definirCabecerasTabla() {
