@@ -288,4 +288,6 @@ public class FrmReporteVentas extends javax.swing.JInternalFrame {
     private javax.swing.JTable tablaVentas;
     private javax.swing.JTextField txtBuscarDni;
     // End of variables declaration//GEN-END:variables
+//holap
+
 }
