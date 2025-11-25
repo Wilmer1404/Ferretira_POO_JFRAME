@@ -3,17 +3,32 @@ package com.ferreteria.presentacion;
 import com.ferreteria.entidades.Cliente;
 import com.ferreteria.entidades.Empleado;
 import com.ferreteria.negocio.ClienteNegocio;
-import com.ferreteria.negocio.EmpleadoNegocio; // Necesitaremos esto para el login de Admin
+import com.ferreteria.negocio.EmpleadoNegocio;
 import java.util.Optional;
 import javax.swing.JOptionPane;
 
+/**
+ * Formulario de login del sistema de ferretería.
+ * Permite la autenticación tanto de clientes como de empleados.
+ * 
+ * Funcionalidades:
+ * - Login dual: clientes y empleados usan el mismo formulario
+ * - Validación de credenciales con BCrypt
+ * - Redirección automática según el tipo de usuario:
+ *   * Clientes → Dashboard del Cliente
+ *   * Empleados → Dashboard Administrativo (según rol)
+ * - Enlace para registro de nuevos clientes
+ * 
+ * Esta es la puerta de entrada al sistema y determina
+ * el flujo de navegación según el tipo de usuario.
+ */
 public class FrmLogin extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmLogin.class.getName());
-    
+
     private final ClienteNegocio CLIENTE_NEGOCIO;
     private final EmpleadoNegocio EMPLEADO_NEGOCIO;
-    
+
     public FrmLogin() {
         initComponents();
         this.CLIENTE_NEGOCIO = new ClienteNegocio();
@@ -57,6 +72,11 @@ public class FrmLogin extends javax.swing.JFrame {
         });
 
         btnRegistrar.setText("Registrarse");
+        btnRegistrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistrarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -110,7 +130,7 @@ public class FrmLogin extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEmailActionPerformed
-       // TODO add your handling code here:
+        // TODO add your handling code here:
     }//GEN-LAST:event_txtEmailActionPerformed
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
@@ -121,40 +141,47 @@ public class FrmLogin extends javax.swing.JFrame {
             lblMensaje.setText("Email y contraseña son obligatorios.");
             return;
         }
-        
 
         Optional<Empleado> empleadoOpt = this.EMPLEADO_NEGOCIO.login(email, password);
         if (empleadoOpt.isPresent()) {
-            // ¡Éxito Admin!
             lblMensaje.setText("");
-            // ¡Éxito Admin!
-            FrmDashboardAdmin adminDash = new FrmDashboardAdmin();
+
+            Empleado empleadoLogueado = empleadoOpt.get();
+            FrmDashboardAdmin adminDash = new FrmDashboardAdmin(empleadoLogueado);
+
+            adminDash.setSize(1280, 720);
+            adminDash.setLocationRelativeTo(null);
             adminDash.setVisible(true);
-            this.dispose(); // Cierra la ventana de login
-            return;
-        }
-        
-        // B. Intentar login como Cliente
-        Optional<Cliente> clienteOpt = this.CLIENTE_NEGOCIO.login(email, password);
-        if (clienteOpt.isPresent()) {
-            // ¡Éxito Cliente!
-            lblMensaje.setText("");
-            JOptionPane.showMessageDialog(this, "Bienvenido Cliente: " + clienteOpt.get().getNombre());
-            
-            // Aquí abriríamos el FrmDashboardCliente
-            // FrmDashboardCliente clienteDash = new FrmDashboardCliente(clienteOpt.get()); // Le pasamos el cliente
-            // clienteDash.setVisible(true);
-            this.dispose(); // Cierra la ventana de login
+            this.dispose();
             return;
         }
 
-        // C. Fracaso total
+        Optional<Cliente> clienteOpt = this.CLIENTE_NEGOCIO.login(email, password);
+        if (clienteOpt.isPresent()) {
+            lblMensaje.setText("");
+
+            Cliente clienteLogueado = clienteOpt.get();
+
+            FrmDashboardCliente clienteDash = new FrmDashboardCliente(clienteLogueado);
+
+            clienteDash.setSize(1280, 720);
+            clienteDash.setLocationRelativeTo(null);
+            clienteDash.setVisible(true);
+
+            this.dispose();
+            return;
+        }
+
         lblMensaje.setText("Email o contraseña incorrectos.");
     }//GEN-LAST:event_btnLoginActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
+    private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
+        this.dispose();
+
+        FrmRegistroCliente registroForm = new FrmRegistroCliente();
+        registroForm.setVisible(true);
+    }//GEN-LAST:event_btnRegistrarActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

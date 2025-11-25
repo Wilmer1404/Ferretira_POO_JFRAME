@@ -1,17 +1,22 @@
 package com.ferreteria.presentacion;
 
+import com.ferreteria.entidades.Empleado;
 import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 
 public class FrmDashboardAdmin extends javax.swing.JFrame {
-        
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmDashboardAdmin.class.getName());
 
-    public FrmDashboardAdmin() {
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmDashboardAdmin.class.getName());
+    
+    private Empleado empleadoLogueado;
+
+    public FrmDashboardAdmin(Empleado empleado) {
         initComponents();
-        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        this.setTitle("Panel de Administración - FerreteriaApp");
+        this.empleadoLogueado = empleado; 
+        this.setSize(1050, 700);
+        this.setLocationRelativeTo(null);
+        this.setTitle("Panel de Administración - FerreteriaApp - Usuario: " + empleado.getEmail());
     }
 
     @SuppressWarnings("unchecked")
@@ -23,6 +28,8 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
         menuGestion = new javax.swing.JMenu();
         itemGestionProductos = new javax.swing.JMenuItem();
         itemGestionEmpleados = new javax.swing.JMenuItem();
+        itemGestionProveedores = new javax.swing.JMenuItem();
+        itemRegistroCompra = new javax.swing.JMenuItem();
         menuReportes = new javax.swing.JMenu();
         itemReporteVentas = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
@@ -58,6 +65,22 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
             }
         });
         menuGestion.add(itemGestionEmpleados);
+
+        itemGestionProveedores.setText("Gestionar Proveedores\"");
+        itemGestionProveedores.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemGestionProveedoresActionPerformed(evt);
+            }
+        });
+        menuGestion.add(itemGestionProveedores);
+
+        itemRegistroCompra.setText("Registro de Compras");
+        itemRegistroCompra.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemRegistroCompraActionPerformed(evt);
+            }
+        });
+        menuGestion.add(itemRegistroCompra);
 
         jMenuBar1.add(menuGestion);
 
@@ -102,73 +125,72 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void itemGestionProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemGestionProductosActionPerformed
-        // 1. Creas la instancia del formulario
-    FrmGestionProductos frm = new FrmGestionProductos();
-    
-    // 2. Lo añades a tu panel de escritorio (ej. jDesktopPane1)
-    desktopPrincipal.add(frm);
-    
-    // 3. Lo haces visible
-    frm.setVisible(true);
-    
-    // 4. Y AQUÍ LO MAXIMIZAS
-    try {
-        frm.setMaximum(true);
-    } catch (java.beans.PropertyVetoException e) {
-        // Manejar la excepción
-        // e.printStackTrace();
-    }
+        FrmGestionProductos frm = new FrmGestionProductos();
+
+        abrirVentanaInterna(frm);
     }//GEN-LAST:event_itemGestionProductosActionPerformed
 
     private void itemGestionEmpleadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemGestionEmpleadosActionPerformed
-        // TODO: Abrir el JInternalFrame de Gestión de Empleados
+        FrmGestionEmpleados frm = new FrmGestionEmpleados();
+        abrirVentanaInterna(frm);
     }//GEN-LAST:event_itemGestionEmpleadosActionPerformed
 
     private void itemReporteVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemReporteVentasActionPerformed
-        // TODO add your handling code here:
+        FrmReporteVentas frm = new FrmReporteVentas();
+        abrirVentanaInterna(frm);
     }//GEN-LAST:event_itemReporteVentasActionPerformed
 
     private void itemSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemSalirActionPerformed
         System.exit(0);
     }//GEN-LAST:event_itemSalirActionPerformed
 
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void itemGestionProveedoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemGestionProveedoresActionPerformed
+        FrmGestionProveedores frm = new FrmGestionProveedores();
+        abrirVentanaInterna(frm);
+    }//GEN-LAST:event_itemGestionProveedoresActionPerformed
 
-        java.awt.EventQueue.invokeLater(() -> new FrmDashboardAdmin().setVisible(true));
-    }
+    private void itemRegistroCompraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemRegistroCompraActionPerformed
+        FrmRegistroCompra frm = new FrmRegistroCompra(this.empleadoLogueado);
+        abrirVentanaInterna(frm);
+    }//GEN-LAST:event_itemRegistroCompraActionPerformed
+
     
+
+
     private void abrirVentanaInterna(JInternalFrame frame) {
-        // (Lógica avanzada opcional: verificar si ya está abierto)
-        
-        // Centrar la ventana interna
+        for (JInternalFrame openFrame : desktopPrincipal.getAllFrames()) {
+            if (openFrame.getClass().equals(frame.getClass())) {
+                openFrame.toFront();
+                try {
+                    openFrame.setSelected(true);
+                } catch (java.beans.PropertyVetoException e) {
+                }
+                return;
+            }
+        }
+
         Dimension desktopSize = desktopPrincipal.getSize();
         Dimension frameSize = frame.getSize();
-        frame.setLocation((desktopSize.width - frameSize.width) / 2, (desktopSize.height - frameSize.height) / 2);
-        
+        frame.setLocation(
+                (desktopSize.width - frameSize.width) / 2,
+                (desktopSize.height - frameSize.height) / 2
+        );
+
         desktopPrincipal.add(frame);
         frame.setVisible(true);
+
+        try {
+            frame.setMaximum(true);  
+        } catch (java.beans.PropertyVetoException e) {
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDesktopPane desktopPrincipal;
     private javax.swing.JMenuItem itemGestionEmpleados;
     private javax.swing.JMenuItem itemGestionProductos;
+    private javax.swing.JMenuItem itemGestionProveedores;
+    private javax.swing.JMenuItem itemRegistroCompra;
     private javax.swing.JMenuItem itemReporteVentas;
     private javax.swing.JMenuItem itemSalir;
     private javax.swing.JMenu jMenu3;

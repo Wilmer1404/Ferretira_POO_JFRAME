@@ -12,57 +12,50 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.table.DefaultTableModel;
-
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 
 public class FrmGestionProductos extends javax.swing.JInternalFrame {
 
-    // --- 1. Dependencias y Variables de Estado ---
-    
     private final ProductoNegocio PRODUCTO_NEGOCIO;
     private final CategoriaNegocio CATEGORIA_NEGOCIO;
-    
+
     private DefaultTableModel modeloTabla;
     private String accion;
-    private int idSeleccionado; 
-    
-    // (Las variables de componentes (lblPrecio, etc.) ya están declaradas
-    // al final del archivo por NetBeans)
+    private int idSeleccionado;
 
-    /**
-     * Constructor
-     */
     public FrmGestionProductos() {
-        // 1. Inicializa los componentes visuales (los crea NetBeans)
         initComponents();
-        
-        // 2. Inicializar la capa de negocio
+        this.setSize(900, 600);
+        this.setMinimumSize(new java.awt.Dimension(800, 500));
         this.PRODUCTO_NEGOCIO = new ProductoNegocio();
-        this.CATEGORIA_NEGOCIO = new CategoriaNegocio(); // <--- INICIALIZADO
-        
-        // 3. Configurar la JTable (Cabeceras)
+        this.CATEGORIA_NEGOCIO = new CategoriaNegocio();
+
         this.definirCabecerasTabla();
-        
-        // 4. Cargar datos iniciales en la JTable
-        this.listarProductos();
-        
-        // 5. Cargar JComboBox (Tipo de Producto y Categorías)
         this.cargarComboTipoProducto();
-        this.cargarComboCategorias();
-        
-        // 6. Configurar el estado inicial del formulario (botones/campos bloqueados)
-        this.gestionarEstadoFormulario("INICIO");
-        
-        // 7. Configurar Spinners para aceptar decimales
         this.configurarSpinners();
         
-        // 8. Ejecutar la lógica polimórfica de la UI por primera vez
+        this.refrescarDatos(); 
+
+        this.addInternalFrameListener(new InternalFrameAdapter() {
+            @Override
+            public void internalFrameActivated(InternalFrameEvent evt) {
+                refrescarDatos();
+            }
+        });
+        
+    }
+    
+    
+    private void refrescarDatos() {
+        this.listarProductos(txtBuscar.getText().trim()); 
+        this.cargarComboCategorias();
+        this.gestionarEstadoFormulario("INICIO");
         this.gestionarCamposPolimorficos();
     }
-    // --- 2. Lógica de UI (Helpers de Configuración) ---
-    
+
     private void definirCabecerasTabla() {
         modeloTabla = new DefaultTableModel() {
-            // Hacemos que la tabla no sea editable por el usuario
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -71,46 +64,57 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
         modeloTabla.addColumn("ID");
         modeloTabla.addColumn("SKU");
         modeloTabla.addColumn("Nombre");
-        modeloTabla.addColumn("Categoría"); // <--- AÑADIDO
+        modeloTabla.addColumn("Categoría");
         modeloTabla.addColumn("Tipo");
         modeloTabla.addColumn("Precio");
         modeloTabla.addColumn("Stock");
         modeloTabla.addColumn("Unidad");
-        
+
         this.tablaProductos.setModel(modeloTabla);
+
+        this.tablaProductos.getColumnModel().getColumn(0).setPreferredWidth(40);
+        this.tablaProductos.getColumnModel().getColumn(1).setPreferredWidth(80);
+        this.tablaProductos.getColumnModel().getColumn(2).setPreferredWidth(200);
+        this.tablaProductos.getColumnModel().getColumn(3).setPreferredWidth(100);
+        this.tablaProductos.getColumnModel().getColumn(4).setPreferredWidth(100);
+        this.tablaProductos.getColumnModel().getColumn(5).setPreferredWidth(80);
     }
-    
+
     private void cargarComboTipoProducto() {
         cmbTipoProducto.removeAllItems();
         cmbTipoProducto.addItem("UNITARIO");
         cmbTipoProducto.addItem("GRANEL");
         cmbTipoProducto.addItem("SERVICIO");
-        // Añadimos el Listener para el polimorfismo
         cmbTipoProducto.addActionListener(e -> gestionarCamposPolimorficos());
     }
-    
-    /**
-     * Carga el JComboBox 'cmbCategoria' desde la Base de Datos.
-     */
+
     private void cargarComboCategorias() {
-        // Usamos DefaultComboBoxModel para guardar los OBJETOS Categoria
+        Object seleccionActual = cmbCategoria.getSelectedItem();
+        
         DefaultComboBoxModel<Object> modeloCombo = (DefaultComboBoxModel<Object>) cmbCategoria.getModel();
-        modeloCombo.removeAllElements(); // Limpiar items de prueba
-        
-        // 1. Pedimos las categorías al Negocio
+        modeloCombo.removeAllElements();
+
         List<Categoria> categorias = this.CATEGORIA_NEGOCIO.listar();
-        
-        // 2. Iteramos y añadimos el objeto completo
+
         for (Categoria c : categorias) {
-            modeloCombo.addElement(c); 
-            // El JComboBox mostrará c.toString() (que definimos como el nombre)
+            modeloCombo.addElement(c);
         }
-        
-        // 3. Seteamos el modelo en el JComboBox
+
         cmbCategoria.setModel(modeloCombo);
-        cmbCategoria.setSelectedIndex(-1); // Sin selección inicial
+        
+        if (seleccionActual != null) {
+            for (int i = 0; i < modeloCombo.getSize(); i++) {
+                Categoria cat = (Categoria) modeloCombo.getElementAt(i);
+                if (cat.equals(seleccionActual)) { 
+                    cmbCategoria.setSelectedIndex(i);
+                    break;
+                }
+            }
+        } else {
+             cmbCategoria.setSelectedIndex(-1);
+        }
     }
-    
+
     private void configurarSpinners() {
         SpinnerNumberModel modelPrecio = new SpinnerNumberModel(0.0, 0.0, 10000.0, 0.50);
         spinPrecio.setModel(modelPrecio);
@@ -118,12 +122,11 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
         spinStock.setModel(modelStock);
     }
 
-    /**
-     * Lógica de UI Polimórfica (Habilita/Deshabilita campos)
-     */
     private void gestionarCamposPolimorficos() {
         String tipo = (String) cmbTipoProducto.getSelectedItem();
-        if (tipo == null) return; // Si aún no se carga
+        if (tipo == null) {
+            return;
+        }
 
         switch (tipo) {
             case "UNITARIO":
@@ -133,7 +136,7 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
                 spinPrecio.setEnabled(true);
                 spinStock.setEnabled(true);
                 txtUnidadMedida.setEnabled(false);
-                ((SpinnerNumberModel)spinStock.getModel()).setStepSize(1.0);
+                ((SpinnerNumberModel) spinStock.getModel()).setStepSize(1.0);
                 txtUnidadMedida.setText("Unidad");
                 break;
             case "GRANEL":
@@ -142,8 +145,8 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
                 lblUnidadMedida.setText("Unidad Medida:");
                 spinPrecio.setEnabled(true);
                 spinStock.setEnabled(true);
-                txtUnidadMedida.setEnabled(true); 
-                ((SpinnerNumberModel)spinStock.getModel()).setStepSize(0.5);
+                txtUnidadMedida.setEnabled(true);
+                ((SpinnerNumberModel) spinStock.getModel()).setStepSize(0.5);
                 txtUnidadMedida.setText("");
                 break;
             case "SERVICIO":
@@ -151,17 +154,14 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
                 lblStock.setText("Stock:");
                 lblUnidadMedida.setText("Unidad:");
                 spinPrecio.setEnabled(true);
-                spinStock.setEnabled(false); 
+                spinStock.setEnabled(false);
                 txtUnidadMedida.setEnabled(false);
                 spinStock.setValue(0.0);
                 txtUnidadMedida.setText("N/A");
                 break;
         }
     }
-    
-    /**
-     * Controla qué botones y campos están habilitados.
-     */
+
     private void gestionarEstadoFormulario(String estado) {
         switch (estado) {
             case "INICIO":
@@ -171,33 +171,48 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
                 btnEditar.setEnabled(false);
                 btnDesactivar.setEnabled(false);
                 btnCancelar.setEnabled(false);
-                limpiarYBloquearCampos(true);
+                limpiarFormulario();
                 break;
+
             case "NUEVO":
-            case "EDITAR":
+                this.accion = "guardar";
                 btnNuevo.setEnabled(false);
                 btnGuardar.setEnabled(true);
+                btnGuardar.setText("Guardar");
                 btnEditar.setEnabled(false);
                 btnDesactivar.setEnabled(false);
                 btnCancelar.setEnabled(true);
-                limpiarYBloquearCampos(false);
+                limpiarFormulario();
+                bloquearControles(false);
                 gestionarCamposPolimorficos();
+                txtNombre.requestFocus();
                 break;
+
+            case "EDITAR":
+                this.accion = "editar";
+                btnNuevo.setEnabled(false);
+                btnGuardar.setEnabled(true);
+                btnGuardar.setText("Actualizar");
+                btnEditar.setEnabled(false);
+                btnDesactivar.setEnabled(false);
+                btnCancelar.setEnabled(true);
+                bloquearControles(false);
+                gestionarCamposPolimorficos();
+                txtNombre.requestFocus();
+                break;
+
             case "SELECCIONADO":
                 btnNuevo.setEnabled(true);
                 btnGuardar.setEnabled(false);
                 btnEditar.setEnabled(true);
                 btnDesactivar.setEnabled(true);
                 btnCancelar.setEnabled(false);
-                limpiarYBloquearCampos(true);
+                bloquearControles(true);
                 break;
         }
     }
-    
-    /**
-     * Helper para limpiar y (des)habilitar campos.
-     */
-    private void limpiarYBloquearCampos(boolean bloquear) {
+
+    private void limpiarFormulario() {
         txtNombre.setText("");
         txtSku.setText("");
         txtDescripcion.setText("");
@@ -206,55 +221,100 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
         txtUnidadMedida.setText("");
         cmbTipoProducto.setSelectedIndex(0);
         cmbCategoria.setSelectedIndex(-1);
-        
+
+        bloquearControles(true);
+    }
+
+    private void listarProductos(String terminoBusqueda) {
+        try {
+            List<ItemVendible> lista;
+            if (terminoBusqueda == null || terminoBusqueda.isEmpty()) {
+                lista = this.PRODUCTO_NEGOCIO.listar();
+            } else {
+                lista = this.PRODUCTO_NEGOCIO.buscar(terminoBusqueda);
+            }
+
+            if (lista.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No se encontraron resultados.", "Búsqueda", JOptionPane.INFORMATION_MESSAGE);
+                modeloTabla.setRowCount(0); 
+            } else {
+                cargarTabla(lista);
+            }
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Error al listar productos: " + ex.getMessage(),
+                    "Error de Carga", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void cargarTabla(List<ItemVendible> lista) {
+        modeloTabla.setRowCount(0);
+        for (ItemVendible item : lista) {
+            Object[] fila = new Object[8];
+            fila[0] = item.getProductoId();
+            fila[1] = item.getSku();
+            fila[2] = item.getNombre();
+            fila[3] = (item.getCategoria() != null) ? item.getCategoria().getNombre() : "S/C";
+            fila[4] = item.getClass().getSimpleName();
+            fila[5] = item.calcularSubtotal(1);
+            fila[6] = (item instanceof Servicio) ? "Infinito" : item.obtenerStock();
+            fila[7] = item.obtenerUnidadParaGUI();
+            modeloTabla.addRow(fila);
+        }
+    }
+
+    private void cargarItemEnFormulario(ItemVendible item) {
+        if (item == null) {
+            limpiarFormulario();
+            return;
+        }
+
+        txtNombre.setText(item.getNombre());
+        txtSku.setText(item.getSku());
+        txtDescripcion.setText(item.getDescripcion());
+
+        cmbCategoria.setSelectedItem(item.getCategoria());
+
+        if (item instanceof ProductoUnitario) {
+            ProductoUnitario pu = (ProductoUnitario) item;
+            cmbTipoProducto.setSelectedItem("UNITARIO");
+            spinPrecio.setValue(pu.getPrecioUnitario());
+            spinStock.setValue(pu.getStockActual());
+
+        } else if (item instanceof ProductoAGranel) {
+            ProductoAGranel pg = (ProductoAGranel) item;
+            cmbTipoProducto.setSelectedItem("GRANEL");
+            spinPrecio.setValue(pg.getPrecioPorMedida());
+            spinStock.setValue(pg.getStockMedido());
+            txtUnidadMedida.setText(pg.getUnidadMedida());
+
+        } else if (item instanceof Servicio) {
+            Servicio s = (Servicio) item;
+            cmbTipoProducto.setSelectedItem("SERVICIO");
+            spinPrecio.setValue(s.getTarifaServicio());
+            spinStock.setValue(0.0);
+        }
+
+        gestionarCamposPolimorficos();
+    }
+
+    private void bloquearControles(boolean bloquear) {
         txtNombre.setEnabled(!bloquear);
         txtSku.setEnabled(!bloquear);
         txtDescripcion.setEnabled(!bloquear);
         cmbTipoProducto.setEnabled(!bloquear);
         cmbCategoria.setEnabled(!bloquear);
-    }
 
-    // --- 3. Lógica de Negocio (Eventos de la Vista) ---
-    
-    /**
-     * Carga los productos desde la capa de Negocio a la JTable.
-     */
-    private void listarProductos() {
-        try {
-            modeloTabla.setRowCount(0);
-            List<ItemVendible> lista = this.PRODUCTO_NEGOCIO.listar();
-
-            if (lista.isEmpty()) return;
-
-            for (ItemVendible item : lista) {
-                Object[] fila = new Object[8]; // Aumentado a 8 columnas
-                fila[0] = item.getProductoId();
-                fila[1] = item.getSku();
-                fila[2] = item.getNombre();
-                
-                // Lógica para obtener el nombre de la categoría
-                fila[3] = (item.getCategoria() != null) ? item.getCategoria().getNombre() : "S/C";
-                
-                fila[4] = item.getClass().getSimpleName();
-                fila[5] = item.calcularSubtotal(1);
-                fila[6] = (item instanceof Servicio) ? "Infinito" : item.obtenerStock();
-                fila[7] = item.obtenerUnidadParaGUI();
-                
-                modeloTabla.addRow(fila);
-            }
-
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, 
-                    "Error al listar productos: " + ex.getMessage(), 
-                    "Error de Carga", JOptionPane.ERROR_MESSAGE);
+        if (bloquear) {
+            spinPrecio.setEnabled(false);
+            spinStock.setEnabled(false);
+            txtUnidadMedida.setEnabled(false);
+        } else {
+            gestionarCamposPolimorficos();
         }
     }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -284,6 +344,8 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
         btnEditar = new javax.swing.JButton();
         btnDesactivar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
+        txtBuscar = new javax.swing.JTextField();
+        btnBuscar = new javax.swing.JButton();
         scrollTabla = new javax.swing.JScrollPane();
         tablaProductos = new javax.swing.JTable();
 
@@ -448,21 +510,34 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
             }
         });
 
+        btnBuscar.setText("Buscar");
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelAccionesLayout = new javax.swing.GroupLayout(panelAcciones);
         panelAcciones.setLayout(panelAccionesLayout);
         panelAccionesLayout.setHorizontalGroup(
             panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelAccionesLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnNuevo)
-                .addGap(18, 18, 18)
-                .addComponent(btnGuardar)
-                .addGap(18, 18, 18)
-                .addComponent(btnEditar)
-                .addGap(18, 18, 18)
-                .addComponent(btnDesactivar)
-                .addGap(18, 18, 18)
-                .addComponent(btnCancelar)
+                .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(panelAccionesLayout.createSequentialGroup()
+                        .addComponent(btnNuevo)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnGuardar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnEditar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnDesactivar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnCancelar))
+                    .addGroup(panelAccionesLayout.createSequentialGroup()
+                        .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnBuscar)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelAccionesLayout.setVerticalGroup(
@@ -475,7 +550,11 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
                     .addComponent(btnEditar)
                     .addComponent(btnDesactivar)
                     .addComponent(btnCancelar))
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBuscar))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         tablaProductos.setModel(new javax.swing.table.DefaultTableModel(
@@ -489,6 +568,11 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tablaProductos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tablaProductosMousePressed(evt);
+            }
+        });
         scrollTabla.setViewportView(tablaProductos);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -509,7 +593,7 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelAcciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollTabla, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE))
+                .addComponent(scrollTabla, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE))
         );
 
         pack();
@@ -524,14 +608,13 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_txtUnidadMedidaActionPerformed
 
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
-        this.accion = "guardar"; // "guardar" significa insertar uno nuevo
+        this.accion = "guardar";
         btnGuardar.setText("Guardar");
         this.gestionarEstadoFormulario("NUEVO");
         txtNombre.requestFocus();
     }//GEN-LAST:event_btnNuevoActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        // 1. Validar campos
         if (txtNombre.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "El campo Nombre es obligatorio.", "Validación", JOptionPane.WARNING_MESSAGE);
             txtNombre.requestFocus();
@@ -547,58 +630,53 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
             cmbCategoria.requestFocus();
             return;
         }
-        
-        // 2. Crear el objeto polimórfico (Patrón Factory en la Vista)
+
         ItemVendible item;
         String tipo = (String) cmbTipoProducto.getSelectedItem();
-        
+
         switch (tipo) {
             case "UNITARIO":
                 ProductoUnitario pu = new ProductoUnitario();
-                pu.setPrecioUnitario(((Number)spinPrecio.getValue()).doubleValue());
-                pu.setStockActual(((Number)spinStock.getValue()).intValue());
+                pu.setPrecioUnitario(((Number) spinPrecio.getValue()).doubleValue());
+                pu.setStockActual(((Number) spinStock.getValue()).intValue());
                 item = pu;
                 break;
             case "GRANEL":
                 ProductoAGranel pg = new ProductoAGranel();
-                pg.setPrecioPorMedida(((Number)spinPrecio.getValue()).doubleValue());
-                pg.setStockMedido(((Number)spinStock.getValue()).doubleValue());
+                pg.setPrecioPorMedida(((Number) spinPrecio.getValue()).doubleValue());
+                pg.setStockMedido(((Number) spinStock.getValue()).doubleValue());
                 pg.setUnidadMedida(txtUnidadMedida.getText().trim());
                 item = pg;
                 break;
             case "SERVICIO":
                 Servicio s = new Servicio();
-                s.setTarifaServicio(((Number)spinPrecio.getValue()).doubleValue());
+                s.setTarifaServicio(((Number) spinPrecio.getValue()).doubleValue());
                 item = s;
                 break;
             default:
                 JOptionPane.showMessageDialog(this, "Tipo de producto no válido.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
         }
-        
-        // 3. Llenar los datos comunes (Heredados)
+
         item.setNombre(txtNombre.getText().trim());
         item.setSku(txtSku.getText().trim());
         item.setDescripcion(txtDescripcion.getText());
         item.setActivo(true);
-        // Obtenemos el OBJETO Categoria del ComboBox
-        item.setCategoria((Categoria)cmbCategoria.getSelectedItem());
-        
-        
-        // 4. Enviar a la capa de Negocio (Insertar o Actualizar)
+        item.setCategoria((Categoria) cmbCategoria.getSelectedItem());
+
         String respuesta = null;
-        
+
         if (this.accion.equals("guardar")) {
             respuesta = this.PRODUCTO_NEGOCIO.insertar(item);
-        } else { // "editar"
+        } else {
             item.setProductoId(this.idSeleccionado);
             respuesta = this.PRODUCTO_NEGOCIO.actualizar(item);
         }
-        
-        // 5. Interpretar la respuesta del Negocio
+
         if (respuesta == null) {
             JOptionPane.showMessageDialog(this, "Producto guardado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            this.listarProductos(); // Recargar la tabla
+            this.listarProductos("")
+                    ;
             this.gestionarEstadoFormulario("INICIO");
         } else {
             JOptionPane.showMessageDialog(this, respuesta, "Error de Negocio", JOptionPane.ERROR_MESSAGE);
@@ -621,22 +699,22 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this, "Debe seleccionar un producto de la tabla.", "Validación", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
-        int confirm = JOptionPane.showConfirmDialog(this, 
-                "¿Seguro que desea desactivar este producto?\nID: " + this.idSeleccionado + " - " + txtNombre.getText(), 
-                "Confirmar Desactivación", 
-                JOptionPane.YES_NO_OPTION, 
+
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "¿Seguro que desea desactivar este producto?\nID: " + this.idSeleccionado + " - " + txtNombre.getText(),
+                "Confirmar Desactivación",
+                JOptionPane.YES_NO_OPTION,
                 JOptionPane.WARNING_MESSAGE);
-        
+
         if (confirm != JOptionPane.YES_OPTION) {
-            return; // El usuario canceló
+            return;
         }
-        
+
         String respuesta = this.PRODUCTO_NEGOCIO.desactivar(this.idSeleccionado);
-        
+
         if (respuesta == null) {
             JOptionPane.showMessageDialog(this, "Producto desactivado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            this.listarProductos();
+            this.listarProductos("");
             this.gestionarEstadoFormulario("INICIO");
         } else {
             JOptionPane.showMessageDialog(this, respuesta, "Error de Negocio", JOptionPane.ERROR_MESSAGE);
@@ -645,6 +723,8 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         this.gestionarEstadoFormulario("INICIO");
+        this.txtBuscar.setText("");
+        this.listarProductos("");
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void cmbTipoProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbTipoProductoActionPerformed
@@ -655,8 +735,39 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_cmbCategoriaActionPerformed
 
+    private void tablaProductosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaProductosMousePressed
+        int fila = this.tablaProductos.getSelectedRow();
+        if (fila < 0 || modeloTabla.getRowCount() == 0) {
+            return;
+        }
+
+        try {
+            this.idSeleccionado = (int) this.modeloTabla.getValueAt(fila, 0);
+
+            ItemVendible itemSeleccionado = this.PRODUCTO_NEGOCIO.buscarPorId(this.idSeleccionado);
+
+            if (itemSeleccionado != null) {
+                this.cargarItemEnFormulario(itemSeleccionado);
+
+                this.gestionarEstadoFormulario("SELECCIONADO");
+            } else {
+                JOptionPane.showMessageDialog(this, "No se pudo encontrar el producto seleccionado.", "Error de Carga", JOptionPane.ERROR_MESSAGE);
+                this.gestionarEstadoFormulario("INICIO");
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al seleccionar el producto: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            this.gestionarEstadoFormulario("INICIO");
+        }
+    }//GEN-LAST:event_tablaProductosMousePressed
+
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        this.listarProductos(txtBuscar.getText().trim());
+    }//GEN-LAST:event_btnBuscarActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnDesactivar;
     private javax.swing.JButton btnEditar;
@@ -680,6 +791,7 @@ public class FrmGestionProductos extends javax.swing.JInternalFrame {
     private javax.swing.JSpinner spinPrecio;
     private javax.swing.JSpinner spinStock;
     private javax.swing.JTable tablaProductos;
+    private javax.swing.JTextField txtBuscar;
     private javax.swing.JTextArea txtDescripcion;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtSku;
