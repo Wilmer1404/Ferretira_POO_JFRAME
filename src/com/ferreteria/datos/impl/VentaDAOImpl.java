@@ -31,7 +31,10 @@ public class VentaDAOImpl implements IVentaDAO {
     private Venta mapearVentaParaReporte(ResultSet rs) throws SQLException {
         Venta venta = new Venta();
         venta.setVentaId(rs.getInt("venta_id"));
-        venta.setFechaVenta(rs.getTimestamp("fecha_venta").toLocalDateTime());
+        java.sql.Timestamp ts = rs.getTimestamp("fecha_venta");
+        if (ts != null) {
+            venta.setFechaVenta(ts.toLocalDateTime());
+        }
         venta.setTotal(rs.getDouble("total"));
         venta.setMetodoPago(rs.getString("metodo_pago"));
 
@@ -132,7 +135,6 @@ public class VentaDAOImpl implements IVentaDAO {
                 + "ORDER BY v.fecha_venta DESC";
 
         try (Connection conn = Conexion.obtenerConexion(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-
             while (rs.next()) {
                 lista.add(mapearVentaParaReporte(rs));
             }
@@ -155,10 +157,8 @@ public class VentaDAOImpl implements IVentaDAO {
                 + "ORDER BY v.fecha_venta DESC";
 
         try (Connection conn = Conexion.obtenerConexion(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setObject(1, inicio);
             ps.setObject(2, fin);
-
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     lista.add(mapearVentaParaReporte(rs));
@@ -183,9 +183,7 @@ public class VentaDAOImpl implements IVentaDAO {
                 + "ORDER BY v.fecha_venta DESC";
 
         try (Connection conn = Conexion.obtenerConexion(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, clienteId);
-
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     lista.add(mapearVentaParaReporte(rs));
@@ -208,14 +206,11 @@ public class VentaDAOImpl implements IVentaDAO {
                 + "LEFT JOIN Empleado e ON v.empleado_id = e.empleado_id "
                 + "WHERE v.venta_id = ?";
 
-        try (Connection conn = Conexion.obtenerConexion()) {
-
-            try (PreparedStatement psVenta = conn.prepareStatement(sqlVenta)) {
-                psVenta.setInt(1, id);
-                try (ResultSet rsVenta = psVenta.executeQuery()) {
-                    if (rsVenta.next()) {
-                        venta = mapearVentaParaReporte(rsVenta);
-                    }
+        try (Connection conn = Conexion.obtenerConexion(); PreparedStatement psVenta = conn.prepareStatement(sqlVenta)) {
+            psVenta.setInt(1, id);
+            try (ResultSet rsVenta = psVenta.executeQuery()) {
+                if (rsVenta.next()) {
+                    venta = mapearVentaParaReporte(rsVenta);
                 }
             }
 
@@ -224,7 +219,7 @@ public class VentaDAOImpl implements IVentaDAO {
                         + "FROM DetalleVenta d "
                         + "JOIN Producto p ON d.producto_id = p.producto_id "
                         + "WHERE d.venta_id = ?";
-
+                
                 List<DetalleVenta> detalles = new ArrayList<>();
                 try (PreparedStatement psDetalle = conn.prepareStatement(sqlDetalle)) {
                     psDetalle.setInt(1, id);
@@ -234,36 +229,13 @@ public class VentaDAOImpl implements IVentaDAO {
                             detalle.setCantidad(rsDetalle.getDouble("cantidad"));
                             detalle.setPrecioHistorico(rsDetalle.getDouble("precio_historico"));
                             detalle.setSubtotal(rsDetalle.getDouble("subtotal"));
-
-                            ItemVendible item;
-                            String tipo = rsDetalle.getString("tipo_producto");
-
-                            switch (tipo) {
-                                case "UNITARIO":
-                                    ProductoUnitario unitario = new ProductoUnitario();
-                                    unitario.setPrecioUnitario(rsDetalle.getDouble("precio_unitario"));
-                                    unitario.setStockActual(rsDetalle.getInt("stock_actual"));
-                                    item = unitario;
-                                    break;
-                                case "GRANEL":
-                                    ProductoAGranel granel = new ProductoAGranel();
-                                    granel.setPrecioPorMedida(rsDetalle.getDouble("precio_por_medida"));
-                                    granel.setStockMedido(rsDetalle.getDouble("stock_medido"));
-                                    granel.setUnidadMedida(rsDetalle.getString("unidad_medida"));
-                                    item = granel;
-                                    break;
-                                case "SERVICIO":
-                                default:
-                                    Servicio servicio = new Servicio();
-                                    servicio.setTarifaServicio(rsDetalle.getDouble("tarifa_servicio"));
-                                    item = servicio;
-                                    break;
-                            }
-
+                            
+                            // Mapeo básico del producto para mostrar en detalle
+                            ItemVendible item = new ProductoUnitario(); // Instancia base temporal
                             item.setProductoId(rsDetalle.getInt("producto_id"));
                             item.setNombre(rsDetalle.getString("nombre"));
                             item.setSku(rsDetalle.getString("sku"));
-
+                            
                             detalle.setItem(item);
                             detalles.add(detalle);
                         }
@@ -271,22 +243,14 @@ public class VentaDAOImpl implements IVentaDAO {
                 }
                 venta.setDetalles(detalles);
             }
-
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Error al buscar la Venta completa por ID", ex);
+            LOGGER.log(Level.SEVERE, "Error al buscar la Venta por ID", ex);
         }
         return venta;
     }
 
     @Override
-    public boolean actualizar(Venta entidad) {
-        LOGGER.log(Level.WARNING, "El método 'actualizar' Venta no es una operación estándar.");
-        return false;
-    }
-
+    public boolean actualizar(Venta entidad) { return false; }
     @Override
-    public boolean eliminar(Integer id) {
-        LOGGER.log(Level.SEVERE, "PELIGRO: Se intentó eliminar una Venta. Esta operación debe ser prohibida.");
-        return false;
-    }
+    public boolean eliminar(Integer id) { return false; }
 }

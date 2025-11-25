@@ -53,15 +53,14 @@ public class ProductoDAOImpl implements IProductoDAO {
         item.setNombre(rs.getString("nombre"));
         item.setDescripcion(rs.getString("descripcion"));
         item.setActivo(rs.getBoolean("activo"));
+        
         Categoria cat = new Categoria();
         cat.setCategoriaId(rs.getInt("categoria_id"));
         cat.setNombre(rs.getString("categoria_nombre"));
         item.setCategoria(cat);
         return item;
     }
-    public ItemVendible fabricarItemDesdeResultSet(ResultSet rs) throws SQLException {
-        return mapearResultSet(rs);
-    }
+
     @Override
     public List<ItemVendible> listarTodos() {
         List<ItemVendible> lista = new ArrayList<>();
@@ -69,7 +68,9 @@ public class ProductoDAOImpl implements IProductoDAO {
                 + "LEFT JOIN Categoria c ON p.categoria_id = c.categoria_id "
                 + "WHERE p.activo = TRUE "
                 + "ORDER BY p.nombre ASC";
-        try (Connection conn = Conexion.obtenerConexion(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = Conexion.obtenerConexion(); 
+             PreparedStatement ps = conn.prepareStatement(sql); 
+             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 lista.add(mapearResultSet(rs));
             }
@@ -78,12 +79,26 @@ public class ProductoDAOImpl implements IProductoDAO {
         }
         return lista;
     }
+
+    // Standard method from ICrudDAO
     @Override
     public ItemVendible buscarPorId(Integer id) {
+        try (Connection conn = Conexion.obtenerConexion()) {
+            return buscarPorId(id, conn);
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error al buscar producto por ID", ex);
+        }
+        return null;
+    }
+
+    // Transactional method (Overloaded)
+    @Override
+    public ItemVendible buscarPorId(Integer id, Connection conn) {
         String sql = "SELECT p.*, c.nombre as categoria_nombre FROM Producto p "
                 + "LEFT JOIN Categoria c ON p.categoria_id = c.categoria_id "
                 + "WHERE p.producto_id = ?";
-        try (Connection conn = Conexion.obtenerConexion(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        // NOTE: We do not close 'conn' here as it is passed in from a transaction
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -91,11 +106,12 @@ public class ProductoDAOImpl implements IProductoDAO {
                 }
             }
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Error al buscar producto por ID", ex);
+            LOGGER.log(Level.SEVERE, "Error al buscar producto por ID (Transaccional)", ex);
+            // We throw RuntimeException to ensure the caller knows something failed
+            throw new RuntimeException("Error SQL al buscar producto: " + ex.getMessage());
         }
         return null;
     }
-
 
     @Override
     public boolean insertar(ItemVendible entidad) {
@@ -209,9 +225,10 @@ public class ProductoDAOImpl implements IProductoDAO {
     @Override
     public List<ItemVendible> buscarPorNombre(String nombre) {
         List<ItemVendible> lista = new ArrayList<>();
+        // FIX: Using LIKE instead of ILIKE for MySQL compatibility
         String sql = "SELECT p.*, c.nombre as categoria_nombre FROM Producto p "
                 + "LEFT JOIN Categoria c ON p.categoria_id = c.categoria_id "
-                + "WHERE (p.nombre ILIKE ? OR p.sku ILIKE ?) AND p.activo = TRUE "
+                + "WHERE (p.nombre LIKE ? OR p.sku LIKE ?) AND p.activo = TRUE "
                 + "ORDER BY p.nombre ASC";
         try (Connection conn = Conexion.obtenerConexion(); PreparedStatement ps = conn.prepareStatement(sql)) {
             String termino = "%" + nombre + "%";
@@ -227,7 +244,6 @@ public class ProductoDAOImpl implements IProductoDAO {
         }
         return lista;
     }
-
 
     @Override
     public List<ItemVendible> listarStockBajo(int nivelMinimo) {
@@ -280,5 +296,4 @@ public class ProductoDAOImpl implements IProductoDAO {
             throw new RuntimeException(ex); 
         }
     }
-    
 }

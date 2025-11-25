@@ -14,6 +14,7 @@ public class InventarioDAOImpl implements IInventarioDAO {
     
     private static final Logger LOGGER = Logger.getLogger(InventarioDAOImpl.class.getName());
 
+    // Este método es interno y usa la conexión que se le pasa, es seguro.
     private double getStockActual(int productoId, String tipoProducto, Connection conn) throws SQLException {
         String stockField = tipoProducto.equals("UNITARIO") ? "stock_actual" : "stock_medido";
         String sql = "SELECT " + stockField + " FROM Producto WHERE producto_id = ? FOR UPDATE";

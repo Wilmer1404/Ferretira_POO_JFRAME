@@ -6,12 +6,10 @@ import java.util.List;
 
 public interface IVentaDAO extends ICrudDAO<Venta, Integer> {
     
-
     public List<Venta> listarPorCliente(int clienteId);
     
     public List<Venta> listarPorFechas(LocalDate inicio, LocalDate fin);
     
+    // Método necesario para la transacción en el Negocio
     public int insertar(Venta entidad, java.sql.Connection conn); 
-    
-
 }

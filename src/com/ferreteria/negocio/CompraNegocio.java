@@ -3,8 +3,10 @@ package com.ferreteria.negocio;
 import com.ferreteria.conexion.Conexion;
 import com.ferreteria.datos.impl.CompraDAOImpl;
 import com.ferreteria.datos.impl.InventarioDAOImpl;
+import com.ferreteria.datos.impl.ProductoDAOImpl;
 import com.ferreteria.datos.interfaces.ICompraDAO;
 import com.ferreteria.datos.interfaces.IInventarioDAO;
+import com.ferreteria.datos.interfaces.IProductoDAO;
 import com.ferreteria.entidades.Compra;
 import com.ferreteria.entidades.DetalleCompra;
 import com.ferreteria.entidades.ItemVendible;
@@ -19,13 +21,14 @@ public class CompraNegocio {
 
     private final ICompraDAO DATOS_COMPRA;
     private final IInventarioDAO DATOS_INVENTARIO;
-    private final ProductoNegocio PRODUCTO_NEGOCIO;
+    private final IProductoDAO DATOS_PRODUCTO; // Usamos el DAO directamente
+    
     private static final Logger LOGGER = Logger.getLogger(CompraNegocio.class.getName());
 
     public CompraNegocio() {
         this.DATOS_COMPRA = new CompraDAOImpl();
         this.DATOS_INVENTARIO = new InventarioDAOImpl();
-        this.PRODUCTO_NEGOCIO = new ProductoNegocio();
+        this.DATOS_PRODUCTO = new ProductoDAOImpl(); // Inicializamos
     }
 
     public String registrarCompra(Compra compra) {
@@ -47,16 +50,21 @@ public class CompraNegocio {
             conn = Conexion.obtenerConexion();
             conn.setAutoCommit(false); 
 
+            // 1. Validar productos y recuperar datos completos USANDO LA MISMA CONEXIÓN
             for (DetalleCompra det : compra.getDetalles()) {
-                ItemVendible itemEnDB = this.PRODUCTO_NEGOCIO.buscarPorId(det.getItem().getProductoId());
+                // Usamos el DAO directamente pasando 'conn'
+                ItemVendible itemEnDB = this.DATOS_PRODUCTO.buscarPorId(det.getItem().getProductoId(), conn);
+                
                 if (itemEnDB == null) {
-                    throw new RuntimeException("El producto '" + det.getItem().getNombre() + "' (ID: " + det.getItem().getProductoId() + ") ya no existe en el catálogo.");
+                    throw new RuntimeException("El producto (ID: " + det.getItem().getProductoId() + ") ya no existe en el catálogo.");
                 }
                 det.setItem(itemEnDB);
             }
 
+            // 2. Insertar Compra
             int compraId = this.DATOS_COMPRA.insertar(compra, conn);
             
+            // 3. Procesar Detalles y Stock
             for (DetalleCompra det : compra.getDetalles()) {
                 
                 String tipoProducto = "SERVICIO";
@@ -68,7 +76,8 @@ public class CompraNegocio {
                 
                 double cantidadPositiva = det.getCantidad();
 
-                boolean stockOk = this.PRODUCTO_NEGOCIO.actualizarStock(
+                // Usamos el DAO directamente pasando 'conn'
+                boolean stockOk = this.DATOS_PRODUCTO.actualizarStock(
                     det.getItem().getProductoId(), 
                     cantidadPositiva, 
                     tipoProducto, 
@@ -79,16 +88,18 @@ public class CompraNegocio {
                     throw new RuntimeException("Falló la actualización de stock para " + det.getItem().getNombre());
                 }
 
+                // Registrar movimiento
                 this.DATOS_INVENTARIO.registrarMovimientoCompra(det, compraId, empleadoId, conn);
             }
 
-            conn.commit();
-            return null; 
+            conn.commit(); // Confirmar transacción
+            return null; // Éxito
 
         } catch (Exception e) { 
+            LOGGER.log(Level.SEVERE, "Error en transacción de Compra", e);
             if (conn != null) {
                 try {
-                    conn.rollback();
+                    conn.rollback(); // Ahora funcionará porque conn sigue abierta
                 } catch (SQLException ex) {
                     LOGGER.log(Level.SEVERE, "Error crítico. Falló el ROLLBACK de Compra.", ex);
                 }
@@ -99,7 +110,7 @@ public class CompraNegocio {
             if (conn != null) {
                 try {
                     conn.setAutoCommit(true);
-                    conn.close();
+                    conn.close(); // Cerramos la conexión SOLO al final de todo
                 } catch (SQLException ex) {
                     LOGGER.log(Level.SEVERE, "Error al cerrar la conexión de Compra.", ex);
                 }

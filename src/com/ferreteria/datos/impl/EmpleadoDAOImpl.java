@@ -156,10 +156,9 @@ public class EmpleadoDAOImpl implements IEmpleadoDAO {
     @Override
     public List<Empleado> buscar(String termino) {
         List<Empleado> lista = new ArrayList<>();
-        String sql = "SELECT * FROM Empleado " +
-                     "WHERE (dni = ? OR nombre ILIKE ? OR apellidos ILIKE ?) " +
-                     "ORDER BY apellidos, nombre ASC";
-        
+        String sql = "SELECT * FROM Empleado "
+                + "WHERE (dni = ? OR nombre LIKE ? OR apellidos LIKE ?) "
+                + "ORDER BY apellidos, nombre ASC";
         try (Connection conn = Conexion.obtenerConexion();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             

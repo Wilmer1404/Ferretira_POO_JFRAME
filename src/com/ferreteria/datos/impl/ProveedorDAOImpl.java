@@ -133,9 +133,9 @@ public class ProveedorDAOImpl implements IProveedorDAO {
     @Override
     public List<Proveedor> buscar(String termino) {
         List<Proveedor> lista = new ArrayList<>();
-        String sql = "SELECT * FROM Proveedor " +
-                     "WHERE (razon_social ILIKE ? OR ruc ILIKE ?) AND activo = TRUE " +
-                     "ORDER BY razon_social ASC";
+        String sql = "SELECT * FROM Proveedor "
+                + "WHERE (razon_social LIKE ? OR ruc LIKE ?) AND activo = TRUE "
+                + "ORDER BY razon_social ASC";
         
         try (Connection conn = Conexion.obtenerConexion();
              PreparedStatement ps = conn.prepareStatement(sql)) {

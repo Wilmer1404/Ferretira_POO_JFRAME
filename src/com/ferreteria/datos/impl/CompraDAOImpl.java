@@ -28,7 +28,6 @@ public class CompraDAOImpl implements ICompraDAO {
         String sqlDetalle = "INSERT INTO DetalleCompra (compra_id, producto_id, cantidad, precio_compra, subtotal) "
                           + "VALUES (?, ?, ?, ?, ?)";
         
-        
         int compraIdGenerada;
         
         try (PreparedStatement psCompra = conn.prepareStatement(sqlCompra, Statement.RETURN_GENERATED_KEYS)) {
@@ -87,38 +86,15 @@ public class CompraDAOImpl implements ICompraDAO {
     }
 
     @Override
-    public List<Compra> listarTodos() {
-        LOGGER.log(Level.WARNING, "listarTodos() de Compra no implementado.");
-        return new ArrayList<>();
-    }
-
+    public List<Compra> listarTodos() { return new ArrayList<>(); }
     @Override
-    public Compra buscarPorId(Integer id) {
-        LOGGER.log(Level.WARNING, "buscarPorId() de Compra no implementado.");
-        return null;
-    }
-
+    public Compra buscarPorId(Integer id) { return null; }
     @Override
-    public boolean actualizar(Compra entidad) {
-        LOGGER.log(Level.WARNING, "Las compras (Facturas) no deben actualizarse.");
-        return false;
-    }
-
+    public boolean actualizar(Compra entidad) { return false; }
     @Override
-    public boolean eliminar(Integer id) {
-        LOGGER.log(Level.WARNING, "Las compras (Facturas) no deben eliminarse.");
-        return false;
-    }
-    
+    public boolean eliminar(Integer id) { return false; }
     @Override
-    public List<Compra> listarPorProveedor(int proveedorId) {
-        LOGGER.log(Level.WARNING, "listarPorProveedor() de Compra no implementado.");
-        return new ArrayList<>();
-    }
-
+    public List<Compra> listarPorProveedor(int proveedorId) { return new ArrayList<>(); }
     @Override
-    public List<Compra> listarPorEmpleado(int empleadoId) {
-        LOGGER.log(Level.WARNING, "listarPorEmpleado() de Compra no implementado.");
-        return new ArrayList<>();
-    }
+    public List<Compra> listarPorEmpleado(int empleadoId) { return new ArrayList<>(); }
 }
