@@ -68,7 +68,6 @@ public class Proveedor {
         this.activo = activo;
     }
 
-    // --- MEJORA 2: Método toString() ---
     /**
      * Define cómo se mostrará este objeto en un JComboBox.
      * Esta es la solución principal para tu problema del ComboBox.
