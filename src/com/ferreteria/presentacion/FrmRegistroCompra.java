@@ -236,6 +236,7 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
+        btnBuscarProducto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/ferreteria/imagenes/buscar.png"))); // NOI18N
         btnBuscarProducto.setText("Buscar");
 
         javax.swing.GroupLayout panelBusquedaLayout = new javax.swing.GroupLayout(panelBusqueda);
@@ -244,7 +245,7 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
             panelBusquedaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelBusquedaLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(txtBuscarProducto, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
+                .addComponent(txtBuscarProducto, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnBuscarProducto)
                 .addContainerGap())
@@ -284,6 +285,7 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
 
         lblCostoUnitario.setText("Costo Unitario:");
 
+        btnAgregar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/ferreteria/imagenes/agregar.png"))); // NOI18N
         btnAgregar.setText("Agregar");
         btnAgregar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -343,9 +345,9 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addComponent(jLabel1)
-                .addGap(0, 6, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                .addGap(0, 6, Short.MAX_VALUE)
+                .addComponent(jLabel1))
         );
 
         jPanel5.add(jPanel6, java.awt.BorderLayout.NORTH);
@@ -365,7 +367,8 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
 
         lblTotalCompra.setText("Total Costo: S/ 0.00");
 
-        btnQuitarItem.setText("btnQuitarItem");
+        btnQuitarItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/ferreteria/imagenes/eliminar.png"))); // NOI18N
+        btnQuitarItem.setText("QuitarItem");
         btnQuitarItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnQuitarItemActionPerformed(evt);
@@ -391,12 +394,13 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
-                .addComponent(scrollCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20)
+                .addComponent(scrollCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblTotalCompra)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnQuitarItem)
-                .addGap(0, 7, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         jPanel5.add(jPanel7, java.awt.BorderLayout.CENTER);
@@ -413,13 +417,13 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(splitPanePrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
+                .addComponent(splitPanePrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
 
-        panelCabecera.setBorder(javax.swing.BorderFactory.createTitledBorder("Datos de la Compra"));
+        panelCabecera.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Datos de la Compra", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 12))); // NOI18N
 
         lblProveedor.setText("Proveedor:");
 
@@ -440,11 +444,11 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addComponent(lblProveedor)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cmbProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(cmbProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lblObservaciones)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtObservaciones, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
+                .addComponent(txtObservaciones, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         panelCabeceraLayout.setVerticalGroup(
@@ -461,6 +465,7 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
 
         getContentPane().add(panelCabecera, java.awt.BorderLayout.NORTH);
 
+        btnRegistrarCompra.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/ferreteria/imagenes/guardar.png"))); // NOI18N
         btnRegistrarCompra.setText("Confirmar y Guardar Compra");
         btnRegistrarCompra.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -468,7 +473,8 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
             }
         });
 
-        jButton2.setText("btnCancelar");
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/ferreteria/imagenes/cancelar.png"))); // NOI18N
+        jButton2.setText("Cancelar");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -484,7 +490,7 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
                 .addComponent(btnRegistrarCompra)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton2)
-                .addContainerGap(89, Short.MAX_VALUE))
+                .addContainerGap(75, Short.MAX_VALUE))
         );
         panelAccionesLayout.setVerticalGroup(
             panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

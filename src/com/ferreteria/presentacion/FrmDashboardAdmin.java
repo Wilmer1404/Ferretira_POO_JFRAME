@@ -32,7 +32,7 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
         itemRegistroCompra = new javax.swing.JMenuItem();
         menuReportes = new javax.swing.JMenu();
         itemReporteVentas = new javax.swing.JMenuItem();
-        jMenu3 = new javax.swing.JMenu();
+        menusistema = new javax.swing.JMenu();
         itemSalir = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -45,11 +45,13 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
         );
         desktopPrincipalLayout.setVerticalGroup(
             desktopPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 277, Short.MAX_VALUE)
+            .addGap(0, 261, Short.MAX_VALUE)
         );
 
+        menuGestion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/ferreteria/imagenes/categorias.png"))); // NOI18N
         menuGestion.setText("Gestión");
 
+        itemGestionProductos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/ferreteria/imagenes/product.png"))); // NOI18N
         itemGestionProductos.setText("Gestionar Productos");
         itemGestionProductos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -58,6 +60,7 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
         });
         menuGestion.add(itemGestionProductos);
 
+        itemGestionEmpleados.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/ferreteria/imagenes/empl1.png"))); // NOI18N
         itemGestionEmpleados.setText("Gestionar Empleados");
         itemGestionEmpleados.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -66,6 +69,7 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
         });
         menuGestion.add(itemGestionEmpleados);
 
+        itemGestionProveedores.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/ferreteria/imagenes/proveedor.png"))); // NOI18N
         itemGestionProveedores.setText("Gestionar Proveedores\"");
         itemGestionProveedores.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -74,6 +78,7 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
         });
         menuGestion.add(itemGestionProveedores);
 
+        itemRegistroCompra.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/ferreteria/imagenes/compras.png"))); // NOI18N
         itemRegistroCompra.setText("Registro de Compras");
         itemRegistroCompra.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -84,8 +89,10 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
 
         jMenuBar1.add(menuGestion);
 
+        menuReportes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/ferreteria/imagenes/reporte.png"))); // NOI18N
         menuReportes.setText("Reportes");
 
+        itemReporteVentas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/ferreteria/imagenes/repors.png"))); // NOI18N
         itemReporteVentas.setText("Reporte de Ventas");
         itemReporteVentas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -96,17 +103,18 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
 
         jMenuBar1.add(menuReportes);
 
-        jMenu3.setText("Sistema");
+        menusistema.setText("Sistema");
 
+        itemSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/ferreteria/imagenes/salir.png"))); // NOI18N
         itemSalir.setText("Salir");
         itemSalir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 itemSalirActionPerformed(evt);
             }
         });
-        jMenu3.add(itemSalir);
+        menusistema.add(itemSalir);
 
-        jMenuBar1.add(jMenu3);
+        jMenuBar1.add(menusistema);
 
         setJMenuBar(jMenuBar1);
 
@@ -193,9 +201,9 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
     private javax.swing.JMenuItem itemRegistroCompra;
     private javax.swing.JMenuItem itemReporteVentas;
     private javax.swing.JMenuItem itemSalir;
-    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenu menuGestion;
     private javax.swing.JMenu menuReportes;
+    private javax.swing.JMenu menusistema;
     // End of variables declaration//GEN-END:variables
 }

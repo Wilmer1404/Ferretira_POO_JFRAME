@@ -142,6 +142,7 @@ public class FrmReporteVentas extends javax.swing.JInternalFrame {
 
         panelControles.setBorder(javax.swing.BorderFactory.createTitledBorder("Opciones del Reporte"));
 
+        btnRefrescar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/ferreteria/imagenes/refresca.png"))); // NOI18N
         btnRefrescar.setText("Refrescar Lista");
         btnRefrescar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -149,6 +150,7 @@ public class FrmReporteVentas extends javax.swing.JInternalFrame {
             }
         });
 
+        btnVerDetalle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/ferreteria/imagenes/ventas.png"))); // NOI18N
         btnVerDetalle.setText("Ver Detalle de Venta");
         btnVerDetalle.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -158,6 +160,7 @@ public class FrmReporteVentas extends javax.swing.JInternalFrame {
 
         jLabel1.setText("Buscar por DNI:");
 
+        btnBuscarCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/ferreteria/imagenes/buscar.png"))); // NOI18N
         btnBuscarCliente.setText("Buscar Cliente");
         btnBuscarCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -178,10 +181,10 @@ public class FrmReporteVentas extends javax.swing.JInternalFrame {
                         .addComponent(jLabel1))
                     .addComponent(btnVerDetalle))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelControlesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnBuscarCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)
-                    .addComponent(txtBuscarDni, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE))
-                .addContainerGap(110, Short.MAX_VALUE))
+                .addGroup(panelControlesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtBuscarDni, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBuscarCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(87, Short.MAX_VALUE))
         );
         panelControlesLayout.setVerticalGroup(
             panelControlesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -195,7 +198,7 @@ public class FrmReporteVentas extends javax.swing.JInternalFrame {
                 .addGroup(panelControlesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnVerDetalle)
                     .addComponent(btnBuscarCliente))
-                .addContainerGap(9, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         getContentPane().add(panelControles, java.awt.BorderLayout.CENTER);
