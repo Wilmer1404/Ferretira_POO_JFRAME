@@ -79,21 +79,24 @@
             </MenuItem>
           </SubComponents>
         </Menu>
-        <Menu class="javax.swing.JMenu" name="menusistema">
+        <Menu class="javax.swing.JMenu" name="menSistema">
           <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/com/ferreteria/imagenes/salir.png"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Sistema"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menSistemaActionPerformed"/>
+          </Events>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="itemSalir">
+            <MenuItem class="javax.swing.JMenuItem" name="MenSalir">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/com/ferreteria/imagenes/salir.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Salir"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="itemSalirActionPerformed"/>
-              </Events>
             </MenuItem>
           </SubComponents>
         </Menu>

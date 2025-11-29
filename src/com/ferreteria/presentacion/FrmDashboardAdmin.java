@@ -32,8 +32,8 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
         itemRegistroCompra = new javax.swing.JMenuItem();
         menuReportes = new javax.swing.JMenu();
         itemReporteVentas = new javax.swing.JMenuItem();
-        menusistema = new javax.swing.JMenu();
-        itemSalir = new javax.swing.JMenuItem();
+        menSistema = new javax.swing.JMenu();
+        MenSalir = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -103,18 +103,19 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
 
         jMenuBar1.add(menuReportes);
 
-        menusistema.setText("Sistema");
-
-        itemSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/ferreteria/imagenes/salir.png"))); // NOI18N
-        itemSalir.setText("Salir");
-        itemSalir.addActionListener(new java.awt.event.ActionListener() {
+        menSistema.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/ferreteria/imagenes/salir.png"))); // NOI18N
+        menSistema.setText("Sistema");
+        menSistema.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                itemSalirActionPerformed(evt);
+                menSistemaActionPerformed(evt);
             }
         });
-        menusistema.add(itemSalir);
 
-        jMenuBar1.add(menusistema);
+        MenSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/ferreteria/imagenes/salir.png"))); // NOI18N
+        MenSalir.setText("Salir");
+        menSistema.add(MenSalir);
+
+        jMenuBar1.add(menSistema);
 
         setJMenuBar(jMenuBar1);
 
@@ -148,10 +149,6 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
         abrirVentanaInterna(frm);
     }//GEN-LAST:event_itemReporteVentasActionPerformed
 
-    private void itemSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemSalirActionPerformed
-        System.exit(0);
-    }//GEN-LAST:event_itemSalirActionPerformed
-
     private void itemGestionProveedoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemGestionProveedoresActionPerformed
         FrmGestionProveedores frm = new FrmGestionProveedores();
         abrirVentanaInterna(frm);
@@ -161,6 +158,10 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
         FrmRegistroCompra frm = new FrmRegistroCompra(this.empleadoLogueado);
         abrirVentanaInterna(frm);
     }//GEN-LAST:event_itemRegistroCompraActionPerformed
+
+    private void menSistemaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menSistemaActionPerformed
+         System.exit(0);
+    }//GEN-LAST:event_menSistemaActionPerformed
 
     
 
@@ -194,16 +195,16 @@ public class FrmDashboardAdmin extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem MenSalir;
     private javax.swing.JDesktopPane desktopPrincipal;
     private javax.swing.JMenuItem itemGestionEmpleados;
     private javax.swing.JMenuItem itemGestionProductos;
     private javax.swing.JMenuItem itemGestionProveedores;
     private javax.swing.JMenuItem itemRegistroCompra;
     private javax.swing.JMenuItem itemReporteVentas;
-    private javax.swing.JMenuItem itemSalir;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenu menSistema;
     private javax.swing.JMenu menuGestion;
     private javax.swing.JMenu menuReportes;
-    private javax.swing.JMenu menusistema;
     // End of variables declaration//GEN-END:variables
 }

@@ -298,7 +298,7 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
         panelAgregarLayout.setHorizontalGroup(
             panelAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelAgregarLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(45, Short.MAX_VALUE)
                 .addGroup(panelAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelAgregarLayout.createSequentialGroup()
                         .addComponent(lblCantidad)
@@ -341,7 +341,7 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addComponent(jLabel1)
-                .addGap(0, 93, Short.MAX_VALUE))
+                .addGap(0, 259, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -381,7 +381,7 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollCompra, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
+                    .addComponent(scrollCompra, javax.swing.GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -411,7 +411,7 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitPanePrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
+            .addComponent(splitPanePrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -444,12 +444,12 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addComponent(lblProveedor)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cmbProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(cmbProveedor, 0, 175, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(lblObservaciones)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtObservaciones, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(81, 81, 81))
         );
         panelCabeceraLayout.setVerticalGroup(
             panelCabeceraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -490,7 +490,7 @@ public class FrmRegistroCompra extends javax.swing.JInternalFrame {
                 .addComponent(btnRegistrarCompra)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton2)
-                .addContainerGap(75, Short.MAX_VALUE))
+                .addContainerGap(223, Short.MAX_VALUE))
         );
         panelAccionesLayout.setVerticalGroup(
             panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

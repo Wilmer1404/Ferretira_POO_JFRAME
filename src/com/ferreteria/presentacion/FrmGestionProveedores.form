@@ -53,37 +53,32 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="lblRazonSocial" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="txtRazonSocial" max="32767" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
                           <Component id="jblRuc" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="txtRuc" min="-2" pref="92" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="lblEmail" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="txtEmail" max="32767" attributes="0"/>
-                      </Group>
-                  </Group>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="12" pref="12" max="-2" attributes="0"/>
-                          <Component id="lblDireccion" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="txtDireccion" min="-2" pref="181" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="txtEmail" pref="370" max="32767" attributes="0"/>
                           <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                           <Component id="lblTelefono" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                           <Component id="txtTelefono" min="-2" pref="92" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="cmbActivo" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="lblRazonSocial" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="txtRazonSocial" min="-2" pref="327" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="lblDireccion" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
+                          <Component id="txtDireccion" min="-2" pref="304" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -182,7 +177,7 @@
                           <Component id="btnNuevo" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="btnGuardar" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="32767" attributes="0"/>
+                          <EmptySpace type="separate" pref="115" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
                           <Component id="txtBuscar" max="32767" attributes="0"/>
@@ -200,7 +195,7 @@
                           <Component id="btnDesactivar" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="btnCancelar" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="151" max="32767" attributes="0"/>
                       </Group>
                   </Group>
               </Group>

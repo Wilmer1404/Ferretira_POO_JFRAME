@@ -19,8 +19,11 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="scrollTabla" alignment="0" max="32767" attributes="0"/>
-          <Component id="panelFormulario" min="-2" max="-2" attributes="0"/>
+          <Component id="scrollTabla" alignment="0" pref="666" max="32767" attributes="0"/>
+          <Group type="102" alignment="0" attributes="0">
+              <Component id="panelFormulario" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -62,36 +65,31 @@
                           <Component id="txtNombre" min="-2" pref="145" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="lblEmail" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="txtEmail" min="-2" pref="208" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="lblRol" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="cmbRol" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
+                          <Component id="lblRol" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="lblActivo" min="-2" max="-2" attributes="0"/>
-                              <Component id="lblPassword" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="cmbRol" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="132" max="-2" attributes="0"/>
+                          <Component id="lblActivo" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" attributes="0">
+                          <Component id="lblEmail" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="txtEmail" min="-2" pref="277" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Group type="102" attributes="0">
-                              <Component id="lblApellidos" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="txtApellidos" min="-2" pref="99" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="txtPassword" alignment="0" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Group type="102" attributes="0">
+                          <Component id="lblApellidos" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="txtApellidos" min="-2" pref="174" max="-2" attributes="0"/>
                       </Group>
                       <Component id="cmbActivo" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Component id="lblPassword" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="txtPassword" max="32767" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>

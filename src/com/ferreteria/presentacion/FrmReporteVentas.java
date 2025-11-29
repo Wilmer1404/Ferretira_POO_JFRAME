@@ -158,7 +158,7 @@ public class FrmReporteVentas extends javax.swing.JInternalFrame {
             }
         });
 
-        jLabel1.setText("Buscar por DNI:");
+        jLabel1.setText("Buscar por Nombre:");
 
         btnBuscarCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/ferreteria/imagenes/buscar.png"))); // NOI18N
         btnBuscarCliente.setText("Buscar Cliente");
@@ -182,9 +182,11 @@ public class FrmReporteVentas extends javax.swing.JInternalFrame {
                     .addComponent(btnVerDetalle))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panelControlesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtBuscarDni, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBuscarCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(87, Short.MAX_VALUE))
+                    .addComponent(txtBuscarDni, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(panelControlesLayout.createSequentialGroup()
+                        .addGap(25, 25, 25)
+                        .addComponent(btnBuscarCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(155, Short.MAX_VALUE))
         );
         panelControlesLayout.setVerticalGroup(
             panelControlesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
